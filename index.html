@@ -1,145 +1,2212 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Hộp MONEY MISSION 3D</title>
+<title>MONEY MISSION: 30 NGÀY TRƯỞNG THÀNH</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+
 <style>
-:root{--bg:#E9EEF5;--ink:#17243A;--mut:#5A6B80;--btn:#fff;--btnb:#C9D3E0;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0F1621;--ink:#E8EEF5;--mut:#93A3B8;--btn:#1B2636;--btnb:#2E3E54}}
-:root[data-theme="dark"]{--bg:#0F1621;--ink:#E8EEF5;--mut:#93A3B8;--btn:#1B2636;--btnb:#2E3E54}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:"Trebuchet MS","Segoe UI",system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;min-height:100vh;padding:20px 16px 28px}
-h1{font-size:20px;margin:4px 0 2px;text-align:center}
-p.sub{margin:0 0 6px;color:var(--mut);font-size:14px;text-align:center}
-.stage{width:100%;display:flex;justify-content:center;align-items:center;perspective:1400px;touch-action:none;cursor:grab;user-select:none;position:relative}
-.stage:active{cursor:grabbing}
-.scene{width:360px;height:250px;position:relative;transform:scale(var(--s,1));transform-style:preserve-3d}
-.box{position:absolute;inset:0;transform-style:preserve-3d}
-.shadow{position:absolute;left:50%;bottom:6%;width:60%;height:26px;margin-left:-30%;background:radial-gradient(ellipse,rgba(0,0,0,.35),transparent 70%);filter:blur(4px);pointer-events:none}
-.f{position:absolute;overflow:hidden;backface-visibility:hidden;color:#fff}
-.f::after{content:"";position:absolute;inset:0;background:var(--sh,none);pointer-events:none}
-.front,.back,.top,.bottom{width:360px}
-.front,.back{height:250px;left:0;top:0}
-.front{transform:translateZ(40px);background:linear-gradient(140deg,#17243A 0%,#1F4E7A 100%)}
-.back{transform:rotateY(180deg) translateZ(40px);background:#FBFAF5;color:#17243A}
-.right,.left{width:80px;height:250px;left:140px;top:0}
-.right{transform:rotateY(90deg) translateZ(180px);background:#1B3556;--sh:linear-gradient(90deg,rgba(0,0,0,.05),rgba(0,0,0,.2))}
-.left{transform:rotateY(-90deg) translateZ(180px);background:#1B3556;--sh:rgba(0,0,0,.28)}
-.top,.bottom{height:80px;left:0;top:85px}
-.top{transform:rotateX(90deg) translateZ(125px);background:#17243A;--sh:linear-gradient(rgba(255,255,255,.14),rgba(255,255,255,0))}
-.bottom{transform:rotateX(-90deg) translateZ(125px);background:#0E1828;--sh:rgba(0,0,0,.3)}
-/* front art */
-.brand{position:absolute;left:24px;top:26px;font-weight:900;font-size:35px;line-height:1.02}
-.brand b{display:block;color:#FFC93C}
-.pill{position:absolute;left:24px;top:110px;background:#27AE60;border-radius:20px;padding:6px 12px;font-weight:700;font-size:12px}
-.tag{position:absolute;left:24px;top:150px;font-size:12px;line-height:1.4;color:#C9D8EA;width:170px}
-.chips{position:absolute;left:24px;bottom:18px;display:flex;gap:6px}
-.chips i{width:18px;height:18px;border-radius:5px;display:block}
-.fan{position:absolute;right:8px;top:74px;width:150px;height:150px}
-.k{position:absolute;width:64px;height:92px;border-radius:8px;border:3px solid #fff;display:flex;align-items:center;justify-content:center;font-style:normal;font-weight:900;font-size:30px;box-shadow:0 4px 10px rgba(0,0,0,.35)}
-.k.a{background:#F39C12;left:0;top:34px;transform:rotate(-14deg)}
-.k.b{background:#E74C3C;left:44px;top:14px;transform:rotate(-1deg)}
-.k.c{background:#16A085;left:86px;top:34px;transform:rotate(13deg)}
-.coin{position:absolute;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FFE58A,#F2A900);border:3px solid #C98A00;color:#8A5A00;font-weight:900;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 6px rgba(0,0,0,.35)}
-.c1{width:46px;height:46px;right:26px;bottom:20px;font-size:22px}
-.c2{width:34px;height:34px;right:84px;bottom:14px;font-size:16px}
-.c3{width:28px;height:28px;right:128px;bottom:26px;font-size:13px}
-/* back */
-.back .in{position:absolute;inset:0;padding:20px 24px}
-.back h3{margin:0 0 6px;font-size:16px}
-.back p{margin:0 0 8px;font-size:11px;line-height:1.45;color:#3A4A5E}
-.opt{display:flex;gap:6px;margin:8px 0}
-.opt span{flex:1;border-radius:8px;padding:6px 7px;font-size:9.5px;line-height:1.35;color:#17243A}
-.opt b{display:block;font-size:11px}
-.back ul{margin:6px 0 0;padding-left:16px;font-size:11px;line-height:1.55}
-.qr{position:absolute;right:24px;bottom:20px;width:62px;height:62px;border:2px dashed #3498DB;border-radius:6px;font-size:9px;color:#3498DB;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.2}
-.back .info{position:absolute;left:24px;bottom:20px;font-size:9.5px;font-weight:700;color:#1F4E7A}
-/* sides */
-.spine{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
-.spine span{writing-mode:vertical-rl;font-weight:900;font-size:22px;letter-spacing:1px;white-space:nowrap}
-.spine em{color:#FFC93C;font-style:normal}
-.tl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:20px;font-weight:900;font-size:30px}
-.tl em{color:#FFC93C;font-style:normal}
-.bt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:#93A3B8;text-align:center;line-height:1.5}
-.ctrl{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:10px}
-button{font:inherit;font-size:14px;color:var(--ink);background:var(--btn);border:1px solid var(--btnb);border-radius:10px;padding:9px 14px;cursor:pointer;min-height:40px}
-button:hover{border-color:#3498DB}
-button:focus-visible{outline:3px solid #3498DB;outline-offset:2px}
-button[aria-pressed="true"]{background:#1F4E7A;border-color:#1F4E7A;color:#fff}
-.hint{color:var(--mut);font-size:13px;margin-top:12px;text-align:center;max-width:460px;line-height:1.5}
+/* =====================================================================
+   MONEY MISSION: 30 NGÀY TRƯỞNG THÀNH
+   File này gồm 3 phần:  1) CSS (giao diện)  2) HTML (khung trang)  3) JavaScript (luật chơi)
+   ===================================================================== */
+
+/* ---------------------------------------------------------------------
+   1. MÀU SẮC & FONT: muốn đổi diện mạo cả trò chơi, sửa ở đây
+   --------------------------------------------------------------------- */
+:root {
+  box-sizing: border-box;
+  color-scheme: light;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+
+  --font-display: "Baloo 2", "Be Vietnam Pro", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  /* Mặt bàn (nền trang) và giấy (bàn cờ, bảng, thẻ) */
+  --table: #3b35c8;
+  --table-dot: rgba(255, 255, 255, .13);
+  --on-table: #fff6dc;
+  --paper: #fff9ea;
+  --paper-2: #fff0cf;
+  --ink: #1b1740;
+  --ink-soft: #57537a;
+  --line: #1b1740;
+  --shadow: #1b1740;
+  --focus: #1b1740;
+
+  /* Luôn cố định ở cả sáng và tối: nền rực rỡ thì chữ và viền luôn đậm */
+  --on-color: #1b1740;
+  --edge: #1b1740;
+  --cream: #fff6dc;
+  --die-face: #fffdf4;
+
+  /* Ba quỹ */
+  --need: #4f8cff;
+  --want: #ff6fae;
+  --save: #25c47a;
+
+  /* Bảy loại ô trên bàn cờ (cũng là màu của thẻ cùng loại) */
+  --t-start: #ff7a6b;
+  --t-cost: #8fb4ff;
+  --t-shopping: #ffa45c;
+  --t-incident: #c3a2ff;
+  --t-income: #6fdc9f;
+  --t-safety: #5fd8e6;
+  --t-goal: #ffd23f;
+
+  /* Tiền tăng, tiền giảm, cảnh báo */
+  --pos-bg: #d8f6e4;  --pos-fg: #0a6b3b;
+  --neg-bg: #ffe0e0;  --neg-fg: #a0151f;
+  --warn-bg: #ffefc7; --warn-fg: #7d4b00;
+}
+
+/* Chế độ tối: theo cài đặt máy */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --table: #120f30;  --table-dot: rgba(255, 255, 255, .06);  --on-table: #fff1d1;
+    --paper: #221e45;  --paper-2: #2c2757;
+    --ink: #f7f0dd;    --ink-soft: #bdb7dd;
+    --line: #7d77c2;   --shadow: #07051a;  --focus: #f7f0dd;
+    --pos-bg: rgba(94, 230, 164, .16);   --pos-fg: #86f0bd;
+    --neg-bg: rgba(255, 138, 143, .16);  --neg-fg: #ffb0b3;
+    --warn-bg: rgba(255, 203, 92, .16);  --warn-fg: #ffd780;
+  }
+}
+/* Chế độ tối: khi trang chứa ép bật */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --table: #120f30;  --table-dot: rgba(255, 255, 255, .06);  --on-table: #fff1d1;
+  --paper: #221e45;  --paper-2: #2c2757;
+  --ink: #f7f0dd;    --ink-soft: #bdb7dd;
+  --line: #7d77c2;   --shadow: #07051a;  --focus: #f7f0dd;
+  --pos-bg: rgba(94, 230, 164, .16);   --pos-fg: #86f0bd;
+  --neg-bg: rgba(255, 138, 143, .16);  --neg-fg: #ffb0b3;
+  --warn-bg: rgba(255, 203, 92, .16);  --warn-fg: #ffd780;
+}
+
+/* ---------------------------------------------------------------------
+   2. NỀN TẢNG
+   --------------------------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-padding-top: env(safe-area-inset-top, 0px); -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  font: 400 15px/1.55 var(--font-body);
+  color: var(--ink);
+  background-color: var(--table);
+  background-image: radial-gradient(var(--table-dot) 1.6px, transparent 1.8px);
+  background-size: 26px 26px;
+}
+h1, h2, h3, p, ul, ol { margin: 0; padding: 0; }
+ul, ol { list-style: none; }
+button { font: inherit; color: inherit; }
+[hidden] { display: none !important; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+.topbar :focus-visible { outline-color: var(--on-table); }
+
+.app { width: min(100%, 1500px); margin: 0 auto; padding: 18px clamp(12px, 2vw, 24px) 40px; }
+
+/* ---------------------------------------------------------------------
+   3. THANH TIÊU ĐỀ
+   --------------------------------------------------------------------- */
+.topbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; margin-bottom: 30px; color: var(--on-table); }
+.brand { display: flex; align-items: center; gap: 12px; font: inherit; }
+.brand__coin {
+  display: grid; place-items: center; width: 48px; height: 48px;
+  background: var(--t-goal); color: var(--on-color);
+  border: 3px solid var(--edge); border-radius: 50%; box-shadow: 3px 3px 0 var(--shadow);
+  font: 800 25px/1 var(--font-display);
+}
+.brand__text { display: grid; }
+.brand__name { font: 800 clamp(24px, 3.2vw, 32px)/1 var(--font-display); text-shadow: 2px 2px 0 var(--shadow); }
+.brand__tag { font-size: 13px; opacity: .9; }
+.topbar__note { flex: 1 1 260px; max-width: 58ch; font-size: 13.5px; opacity: .92; }
+
+/* ---------------------------------------------------------------------
+   4. KHUNG BA CỘT: ngân sách (trái) | bàn cờ (giữa) | xúc xắc & thẻ (phải)
+   --------------------------------------------------------------------- */
+.layout {
+  display: grid; align-items: start; gap: 34px 22px;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "board" "side" "budget";
+}
+.layout > * { min-width: 0; }
+.panel--budget { grid-area: budget; }
+.board-wrap    { grid-area: board; }
+.side          { grid-area: side; }
+
+@media (min-width: 700px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas: "board board" "budget side";
+  }
+}
+@media (min-width: 1040px) {
+  .layout { grid-template-columns: 260px minmax(0, 1fr) 290px; grid-template-areas: "budget board side"; }
+}
+@media (min-width: 1300px) {
+  .layout { grid-template-columns: 300px minmax(0, 1fr) 340px; }
+}
+
+/* ---------------------------------------------------------------------
+   5. THÀNH PHẦN DÙNG CHUNG: bảng, nút, chip tiền, ghi chú
+   --------------------------------------------------------------------- */
+.panel {
+  position: relative; padding: 30px 16px 16px;
+  background: var(--paper); border: 3px solid var(--line); border-radius: 22px; box-shadow: 6px 6px 0 var(--shadow);
+}
+.panel__tab {
+  position: absolute; top: -17px; left: 16px; padding: 2px 15px 1px;
+  background: var(--tab, var(--t-goal)); color: var(--on-color);
+  border: 2.5px solid var(--edge); border-radius: 999px; box-shadow: 2px 2px 0 var(--shadow);
+  font: 800 16px/1.5 var(--font-display);
+}
+
+.btn {
+  --btn-bg: var(--cream);
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 10px 18px; cursor: pointer;
+  font: 800 16px/1.2 var(--font-display); color: var(--on-color);
+  background: var(--btn-bg); border: 2.5px solid var(--edge); border-radius: 14px; box-shadow: 0 4px 0 var(--shadow);
+  transition: transform .08s, box-shadow .08s;
+}
+.btn:hover:not(:disabled)  { transform: translateY(-2px); box-shadow: 0 6px 0 var(--shadow); }
+.btn:active:not(:disabled) { transform: translateY(3px);  box-shadow: 0 1px 0 var(--shadow); }
+.btn:disabled { cursor: not-allowed; opacity: .55; box-shadow: 0 2px 0 var(--shadow); }
+.btn--primary { --btn-bg: var(--t-goal); }
+.btn--roll    { --btn-bg: var(--t-start); width: 100%; padding: 14px 18px; font-size: 22px; }
+.btn--block   { width: 100%; }
+.btn--small   { padding: 6px 14px; font-size: 14px; border-radius: 12px; box-shadow: 0 3px 0 var(--shadow); }
+
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 6px; padding: 1px 10px;
+  font: 700 12.5px/1.6 var(--font-body); white-space: nowrap;
+  color: var(--chip-fg); background: var(--chip-bg); border: 1.5px solid var(--chip-fg); border-radius: 999px;
+}
+.chip--pos  { --chip-bg: var(--pos-bg);  --chip-fg: var(--pos-fg); }
+.chip--neg  { --chip-bg: var(--neg-bg);  --chip-fg: var(--neg-fg); }
+.chip--warn { --chip-bg: var(--warn-bg); --chip-fg: var(--warn-fg); }
+.chip--zero { --chip-bg: var(--paper-2); --chip-fg: var(--ink-soft); }
+.dot { width: 9px; height: 9px; border-radius: 50%; background: var(--fill); border: 1.5px solid var(--edge); }
+.dot--need, .fund--need, .split-field--need, .seg--need { --fill: var(--need); }
+.dot--want, .fund--want, .split-field--want, .seg--want { --fill: var(--want); }
+.dot--save, .fund--save, .split-field--save, .seg--save { --fill: var(--save); }
+
+.note   { padding: 8px 12px; font-size: 13.5px; color: var(--warn-fg); background: var(--warn-bg); border-radius: 10px; }
+.lesson {
+  padding: 12px 16px; line-height: 1.5; color: #1b1740; background: #ffe98a;
+  border: 2px solid var(--edge); border-radius: 6px 16px 16px 16px; box-shadow: 3px 3px 0 var(--shadow);
+}
+.empty { padding: 18px 14px; text-align: center; color: var(--ink-soft); border: 2px dashed var(--line); border-radius: 14px; }
+
+.meter { height: 13px; background: var(--paper); border: 2px solid var(--line); border-radius: 999px; overflow: hidden; }
+.meter__fill {
+  display: block; width: 0; height: 100%; background: var(--fill, var(--save));
+  transition: width .6s cubic-bezier(.3, .9, .3, 1);
+}
+.is-negative { color: var(--neg-fg); }
+
+/* ---------------------------------------------------------------------
+   6. CỘT TRÁI: BẢNG NGÂN SÁCH
+   --------------------------------------------------------------------- */
+.total { padding: 0 4px 14px; }
+.total__label { display: block; font-size: 13px; color: var(--ink-soft); }
+.total__value { display: block; font: 800 36px/1.1 var(--font-display); font-variant-numeric: tabular-nums; }
+
+.fund { padding: 10px 12px 9px; background: var(--paper-2); border: 2px solid var(--line); border-radius: 14px; }
+.fund + .fund { margin-top: 10px; }
+.fund__top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.fund__icon {
+  display: grid; place-items: center; width: 30px; height: 30px; font-size: 16px;
+  background: var(--fill); border: 2px solid var(--edge); border-radius: 9px;
+}
+.fund__name { font-weight: 700; }
+.fund__amount { margin-left: auto; font: 800 21px/1 var(--font-display); font-variant-numeric: tabular-nums; }
+.fund__hint { margin-top: 6px; font-size: 12.5px; color: var(--ink-soft); }
+.fund.flash-up   { animation: flash-up .9s ease-out; }
+.fund.flash-down { animation: flash-down .9s ease-out; }
+
+.goal { margin-top: 14px; padding: 12px; border: 2px dashed var(--line); border-radius: 14px; }
+.goal__top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 8px; }
+.goal__title { font: 800 17px/1.2 var(--font-display); }
+.goal__target { font-size: 13px; color: var(--ink-soft); white-space: nowrap; }
+.goal__status { margin-top: 6px; font-size: 13px; font-weight: 600; }
+.meter--goal .meter__fill { --fill: var(--t-goal); }
+
+.safety {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 12px; padding: 8px 12px;
+  color: var(--on-color); background: var(--t-safety); border: 2px solid var(--edge); border-radius: 12px; font-weight: 700;
+}
+.safety strong { font: 800 21px/1 var(--font-display); }
+
+.log { margin-top: 18px; }
+.log__title { margin-bottom: 8px; font: 800 18px/1.2 var(--font-display); }
+.log__list { display: grid; gap: 8px; max-height: 260px; padding-right: 4px; overflow-y: auto; overscroll-behavior: contain; }
+.log__item { display: grid; grid-template-columns: auto 1fr; gap: 8px; padding: 8px 10px; background: var(--paper-2); border-radius: 12px; }
+.log__day {
+  align-self: start; padding: 0 9px; font: 800 12.5px/1.7 var(--font-display);
+  color: var(--paper); background: var(--ink); border-radius: 999px; white-space: nowrap;
+}
+.log__body { display: grid; gap: 6px; min-width: 0; }
+.log__name { font-size: 13.5px; font-weight: 600; line-height: 1.35; }
+.log__note { font-size: 12.5px; color: var(--warn-fg); }
+
+/* ---------------------------------------------------------------------
+   7. Ở GIỮA: BÀN CỜ 30 Ô
+   Bàn cờ là chu vi của lưới 9 cột × 8 hàng. Kích thước chữ tính theo bề rộng bàn cờ (cqw)
+   nên bàn cờ co giãn đẹp trên mọi màn hình.
+   --------------------------------------------------------------------- */
+.board-wrap { container-type: inline-size; width: 100%; max-width: 780px; margin-inline: auto; }
+.board {
+  display: grid; aspect-ratio: 9 / 8; gap: .8cqw; padding: 1.4cqw;
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  grid-template-rows: repeat(8, minmax(0, 1fr));
+  background: var(--paper); border: 3px solid var(--line); border-radius: clamp(16px, 3cqw, 26px); box-shadow: 7px 7px 0 var(--shadow);
+}
+
+.cell {
+  grid-column: var(--c); grid-row: var(--r);
+  position: relative; display: flex; flex-direction: column; justify-content: space-between; gap: 2px;
+  min-width: 0; min-height: 0; padding: 6% 7% 7%;
+  color: var(--on-color); background: var(--cell-bg);
+  border: 2px solid var(--edge); border-radius: clamp(6px, 1.5cqw, 13px);
+}
+.cell__top { display: flex; justify-content: space-between; align-items: flex-start; }
+.cell__day { font: 800 clamp(10px, 2.2cqw, 18px)/1 var(--font-display); }
+.cell__icon {
+  display: grid; place-items: center; width: 3.9cqw; height: 3.9cqw; min-width: 18px; min-height: 18px;
+  font-size: clamp(11px, 2.2cqw, 18px); line-height: 1;
+  background: var(--cream); border: 1.5px solid var(--edge); border-radius: 50%;
+}
+.cell__label {
+  font: 700 clamp(8px, 1.3cqw, 11.5px)/1.1 var(--font-body); text-align: center;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.cell--past   { opacity: .72; }
+.cell--active { z-index: 2; opacity: 1; box-shadow: 0 0 0 3px var(--paper), 0 0 0 6px var(--ink); }
+
+/* Quân cờ */
+.token { position: absolute; left: 0; right: 0; bottom: 5%; width: 46%; height: 60%; margin-inline: auto; z-index: 3; pointer-events: none; }
+.token__svg { display: block; width: 100%; height: 100%; overflow: visible; }
+
+/* Phần giữa bàn cờ */
+.board-center {
+  grid-column: 2 / 9; grid-row: 2 / 8;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.5cqw;
+  min-width: 0; padding: 1cqw 2cqw; text-align: center;
+}
+.board-title { font: 800 clamp(22px, 6.6cqw, 54px)/.95 var(--font-display); text-shadow: .5cqw .5cqw 0 var(--t-goal); }
+.board-subtitle {
+  padding: 0 .9em; font: 700 clamp(9px, 2cqw, 16px)/1.7 var(--font-body); letter-spacing: .05em;
+  color: var(--paper); background: var(--ink); border-radius: 999px;
+}
+.board-message {
+  display: grid; place-items: center; width: min(100%, 90%); min-height: 3.3em; padding: .55em 1em;
+  font: 600 clamp(11px, 2.1cqw, 16px)/1.35 var(--font-body);
+  background: var(--paper-2); border: 2px dashed var(--line); border-radius: 14px;
+}
+.progress { display: flex; align-items: center; gap: 10px; width: min(100%, 60cqw); font: 700 clamp(10px, 1.9cqw, 14px)/1 var(--font-body); white-space: nowrap; }
+.progress .meter { flex: 1; height: clamp(9px, 1.6cqw, 13px); }
+.progress .meter__fill { --fill: var(--t-start); }
+
+/* Chú giải 6 loại ô */
+.legend { display: grid; gap: 6px 10px; }
+.legend--center { grid-template-columns: repeat(3, auto); justify-content: center; }
+.legend--below  { display: none; grid-template-columns: 1fr 1fr; margin-top: 18px; gap: 10px; }
+.legend__item { display: flex; align-items: center; gap: 7px; font: 600 clamp(9px, 1.5cqw, 12.5px)/1.25 var(--font-body); text-align: left; }
+.legend__icon {
+  display: grid; place-items: center; flex: none; width: 2.5em; height: 2.5em;
+  background: var(--tcolor); border: 2px solid var(--edge); border-radius: 8px;
+}
+.legend__text { display: grid; }
+.legend__text small { font-weight: 400; color: var(--ink-soft); }
+.legend--center small { display: none; }
+.legend--below .legend__item { font-size: 13px; padding: 8px; background: var(--paper); border: 2px solid var(--line); border-radius: 12px; }
+.legend--below .legend__text small { font-size: 12px; }
+
+/* Bàn cờ nhỏ (điện thoại, cột hẹp): ẩn bớt chữ cho gọn */
+@container (max-width: 560px) {
+  .legend--center { display: none; }
+  .legend--below  { display: grid; }
+  .cell__label    { display: none; }
+  .cell           { justify-content: flex-start; }
+}
+
+/* ---------------------------------------------------------------------
+   8. CỘT PHẢI: XÚC XẮC, THẺ BÀI, LUẬT CHƠI
+   --------------------------------------------------------------------- */
+.side { display: grid; gap: 34px; align-content: start; }
+
+.dice-row { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
+.die {
+  flex: none; display: grid; width: 88px; height: 88px; padding: 11px;
+  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+  background: var(--die-face); border: 3px solid var(--edge); border-radius: 20px; box-shadow: 0 5px 0 var(--shadow);
+}
+.pip { display: grid; place-items: center; }
+.pip.on::before { content: ""; width: 15px; height: 15px; background: #1b1740; border-radius: 50%; }
+.die__q { grid-area: 1 / 1 / 4 / 4; display: grid; place-items: center; font: 800 42px/1 var(--font-display); color: #1b1740; }
+.die.is-rolling { animation: shake .36s linear infinite; }
+.dice-info__day { font: 800 24px/1.1 var(--font-display); }
+.dice-info__text { margin-top: 4px; font-size: 14px; color: var(--ink-soft); }
+
+.mini-card { overflow: hidden; background: var(--paper); border: 2.5px solid var(--line); border-radius: 16px; }
+.mini-card__head {
+  display: flex; justify-content: space-between; gap: 8px; padding: 7px 12px;
+  color: var(--on-color); background: var(--tcolor); border-bottom: 2.5px solid var(--edge); font-weight: 700; font-size: 14px;
+}
+.mini-card__body { display: grid; gap: 10px; padding: 12px; }
+.mini-card__body h3 { font: 800 21px/1.15 var(--font-display); }
+.mini-card__choice { font-size: 14px; }
+
+.help details + details { margin-top: 10px; padding-top: 10px; border-top: 2px dashed var(--line); }
+.help summary { cursor: pointer; font: 800 16px/1.4 var(--font-display); }
+.help p, .help li { margin-top: 6px; font-size: 14px; color: var(--ink-soft); }
+.help li { padding-left: 14px; position: relative; }
+.help li::before { content: ""; position: absolute; left: 0; top: .6em; width: 6px; height: 6px; background: var(--t-goal); border: 1.5px solid var(--edge); border-radius: 50%; }
+
+/* ---------------------------------------------------------------------
+   9. HỘP THOẠI (MODAL) DÙNG CHO THẺ, BẢNG CHIA TIỀN, BẢNG ĐIỂM
+   --------------------------------------------------------------------- */
+.modal {
+  width: min(680px, calc(100vw - 24px)); max-height: calc(100vh - 24px); max-height: calc(100dvh - 24px);
+  padding: 0; overflow: auto; overscroll-behavior: contain;
+  color: var(--ink); background: var(--paper); border: 3px solid var(--line); border-radius: 24px; box-shadow: 8px 8px 0 var(--shadow);
+}
+.modal::backdrop { background: rgba(14, 10, 48, .68); backdrop-filter: blur(3px); }
+.modal[open] { animation: pop-in .24s cubic-bezier(.2, 1.15, .4, 1); }
+#modalBody { outline: none; }
+
+/* Thẻ bài */
+.gcard__head {
+  display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 22px;
+  color: var(--on-color); background: var(--tcolor); border-bottom: 3px solid var(--edge); font: 800 18px/1.2 var(--font-display);
+}
+.gcard__body { display: grid; gap: 14px; padding: 20px 22px 24px; }
+.gcard__title { font: 800 31px/1.08 var(--font-display); }
+.gcard__text { max-width: 62ch; font-size: 16px; line-height: 1.55; }
+.gcard__hint { font-size: 14px; color: var(--ink-soft); }
+.income-amount { font: 700 18px/1.2 var(--font-body); }
+.income-amount strong { font: 800 30px/1 var(--font-display); color: var(--pos-fg); }
+.income-ask { font-weight: 700; }
+
+/* Các lựa chọn A / B / C */
+.options { display: grid; gap: 10px; }
+.option {
+  display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 6px 12px; width: 100%; padding: 12px 14px;
+  text-align: left; cursor: pointer; color: var(--ink); background: var(--paper-2);
+  border: 2.5px solid var(--line); border-radius: 14px; box-shadow: 0 4px 0 var(--shadow);
+  transition: transform .08s, box-shadow .08s, background-color .15s;
+}
+.option:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 0 var(--shadow); background: color-mix(in srgb, var(--tcolor) 30%, var(--paper-2)); }
+.option:disabled { cursor: default; }
+.option__key {
+  grid-row: 1 / span 2; display: grid; place-items: center; width: 40px; height: 40px;
+  color: var(--on-color); background: var(--tcolor); border: 2.5px solid var(--edge); border-radius: 11px; font: 800 21px/1 var(--font-display);
+}
+.option__label { font-weight: 600; line-height: 1.4; }
+.option__chips { grid-column: 2; display: flex; flex-wrap: wrap; gap: 6px; }
+.option--chosen { transform: translateY(2px); box-shadow: 0 2px 0 var(--shadow); background: color-mix(in srgb, var(--tcolor) 42%, var(--paper)); }
+.option--dim { opacity: .5; box-shadow: none; }
+
+/* Kết quả sau khi chọn */
+.result { display: grid; gap: 12px; padding-top: 16px; border-top: 3px dashed var(--line); }
+.verdict { padding: 10px 14px; font-weight: 700; border: 2px solid currentColor; border-radius: 12px; }
+.verdict--good { color: var(--pos-fg); background: var(--pos-bg); }
+.verdict--bad  { color: var(--neg-fg); background: var(--neg-bg); }
+.say-why { font-size: 13.5px; color: var(--ink-soft); }
+
+/* Form chia tiền vào 3 quỹ (dùng ở màn bắt đầu và thẻ Thu nhập) */
+.plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(112px, 1fr)); gap: 8px; }
+.plan {
+  display: grid; justify-items: start; gap: 2px; padding: 8px 11px; text-align: left; cursor: pointer;
+  color: var(--ink); background: var(--paper-2); border: 2.5px solid var(--line); border-radius: 12px;
+}
+.plan b { font: 800 21px/1 var(--font-display); }
+.plan__name { font-size: 13.5px; font-weight: 700; line-height: 1.25; }
+.plan small { font-size: 12px; color: var(--ink-soft); }
+.plan.is-active { color: var(--on-color); background: var(--t-goal); border-color: var(--edge); box-shadow: 0 3px 0 var(--shadow); }
+.plan.is-active small { color: var(--on-color); opacity: .8; }
+.plan:disabled { cursor: default; opacity: .75; }
+
+.split-inputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 12px; }
+.split-field { display: grid; gap: 4px; padding: 8px 10px; border: 2.5px solid var(--line); border-left: 9px solid var(--fill); border-radius: 12px; }
+.split-field__name { font-size: 13.5px; font-weight: 700; }
+.split-field__box { display: flex; align-items: center; gap: 6px; }
+.split-field input {
+  width: 100%; min-width: 0; padding: 6px 8px; font: 700 17px/1.3 var(--font-body);
+  color: var(--ink); background: var(--paper); border: 2px solid var(--line); border-radius: 8px;
+}
+.split-field em { font-style: normal; font-weight: 700; }
+.split-bar { display: flex; height: 16px; margin-top: 12px; overflow: hidden; background: var(--paper-2); border: 2.5px solid var(--line); border-radius: 999px; }
+.seg { height: 100%; background: var(--fill); transition: width .3s; }
+.split-status { margin-top: 8px; font-size: 14px; font-weight: 700; }
+.split-status.is-ok   { color: var(--pos-fg); }
+.split-status.is-warn { color: var(--warn-fg); }
+.split-status.is-bad  { color: var(--neg-fg); }
+
+/* Màn hình bắt đầu */
+.setup { display: grid; gap: 24px; padding: 26px 24px; }
+.setup__intro h2 { margin-bottom: 6px; font: 800 34px/1.05 var(--font-display); }
+.setup__intro p { max-width: 56ch; }
+.step__title { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; font: 800 21px/1.2 var(--font-display); }
+.step__num {
+  display: grid; place-items: center; flex: none; width: 31px; height: 31px; font-size: 16px;
+  color: var(--on-color); background: var(--t-goal); border: 2.5px solid var(--edge); border-radius: 50%;
+}
+.goals { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin-bottom: 12px; }
+.goal-tile {
+  display: grid; justify-items: start; gap: 2px; padding: 10px 12px; text-align: left; cursor: pointer;
+  color: var(--ink); background: var(--paper-2); border: 2.5px solid var(--line); border-radius: 14px;
+}
+.goal-tile__icon { font-size: 24px; line-height: 1.2; }
+.goal-tile b { line-height: 1.25; }
+.goal-tile small { font-size: 12.5px; color: var(--ink-soft); }
+.goal-tile[aria-pressed="true"] { color: var(--on-color); background: var(--t-goal); border-color: var(--edge); box-shadow: 0 3px 0 var(--shadow); }
+.goal-tile[aria-pressed="true"] small { color: var(--on-color); }
+.goal-desc { min-height: 1.5em; margin-top: 10px; font-size: 14px; color: var(--ink-soft); }
+.rule { padding: 10px 14px; font-size: 14px; background: var(--paper-2); border-left: 7px solid var(--t-start); border-radius: 10px; }
+
+/* Ô Mục tiêu tiết kiệm: chuyển tiền */
+.transfer { display: grid; gap: 10px; }
+.transfer label { font-weight: 600; }
+.transfer input[type="range"] { width: 100%; height: 30px; accent-color: var(--save); }
+.quick { display: flex; flex-wrap: wrap; gap: 8px; }
+.transfer__after { font-size: 14px; font-weight: 600; }
+.goal-box { display: grid; gap: 4px; padding: 12px; border: 2px dashed var(--line); border-radius: 14px; }
+
+/* Bảng điểm */
+.score { display: grid; gap: 18px; padding: 26px 24px; }
+.score__head { display: grid; justify-items: start; gap: 4px; }
+.score__head h2 { font: 800 32px/1.05 var(--font-display); }
+.score__rank { padding: 2px 14px; font-weight: 700; color: var(--on-color); background: var(--t-goal); border: 2.5px solid var(--edge); border-radius: 999px; }
+.score__total { display: flex; align-items: baseline; gap: 8px; font-weight: 700; }
+.score__total strong { font: 800 76px/1 var(--font-display); }
+.score-rows { display: grid; gap: 8px; }
+.score-row { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; padding: 10px 12px; background: var(--paper-2); border: 2px solid var(--line); border-radius: 14px; }
+.score-row__icon { font-size: 22px; }
+.score-row small { display: block; font-size: 13px; color: var(--ink-soft); }
+.score-row__pts { min-width: 2.4em; text-align: right; font: 800 24px/1 var(--font-display); }
+.score-row.is-earned .score-row__pts { color: var(--pos-fg); }
+.score-row.is-missed { opacity: .75; }
+.callout { padding: 14px 16px; font: 700 17px/1.45 var(--font-body); color: var(--on-color); background: var(--t-safety); border: 2.5px solid var(--edge); border-radius: 14px; box-shadow: 4px 4px 0 var(--shadow); }
+.actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; }
+
+.confirm { display: grid; gap: 14px; padding: 24px; }
+.confirm h2 { font: 800 28px/1.1 var(--font-display); }
+
+/* ---------------------------------------------------------------------
+   10. CHUYỂN ĐỘNG (chỉ khi người chơi thao tác) VÀ TÙY CHỌN GIẢM CHUYỂN ĐỘNG
+   --------------------------------------------------------------------- */
+@keyframes pop-in   { from { opacity: 0; transform: translateY(14px) scale(.96); } to { opacity: 1; transform: none; } }
+@keyframes shake    { 0% { transform: rotate(-9deg); } 25% { transform: rotate(8deg) translateY(-7px); } 50% { transform: rotate(-7deg); } 75% { transform: rotate(9deg) translateY(-5px); } 100% { transform: rotate(-9deg); } }
+@keyframes flash-up   { 0% { background: var(--pos-bg); box-shadow: 0 0 0 3px var(--pos-fg); } 100% { background: var(--paper-2); box-shadow: 0 0 0 0 transparent; } }
+@keyframes flash-down { 0% { background: var(--neg-bg); box-shadow: 0 0 0 3px var(--neg-fg); } 100% { background: var(--paper-2); box-shadow: 0 0 0 0 transparent; } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+
+/* ---------- Multiplayer · phím tắt · nổi số tiền · nhìn trộm ---------- */
+.roster { display: grid; gap: 6px; margin: 0 0 14px; padding: 0; list-style: none; }
+.roster[hidden] { display: none; }
+.roster__item { display: grid; grid-template-columns: auto 1fr auto auto; align-items: center; gap: 8px; padding: 6px 10px; font-size: 13px; background: var(--paper-2); border: 2px solid var(--line); border-radius: 12px; }
+.roster__item.is-current { background: var(--pc); color: var(--on-color); box-shadow: 0 3px 0 var(--shadow); }
+.roster__item.is-done { opacity: .6; }
+.roster__name { overflow: hidden; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+.roster__day { opacity: .75; }
+.roster__dot { display: inline-block; width: 12px; height: 12px; margin-right: 4px; vertical-align: -1px; background: var(--pc); border: 2px solid var(--edge); border-radius: 50%; }
+.roster__item .roster__dot { margin: 0; }
+.token--multi { right: auto; bottom: calc(4% + var(--row, 0) * 38%); left: calc(3% + var(--col, 0) * 24%); width: 24%; height: 36%; margin: 0; }
+.token--current { z-index: 4; }
+.token--current .token__svg { filter: drop-shadow(0 0 3px #fff) drop-shadow(0 0 1px var(--ink)); }
+.fund { position: relative; }
+.float-money { position: absolute; top: 4px; right: 10px; z-index: 6; padding: 1px 8px; font: 800 15px var(--font-display); border-radius: 999px; pointer-events: none; }
+.float-money--up   { background: var(--pos-bg); color: var(--pos-fg); }
+.float-money--down { background: var(--neg-bg); color: var(--neg-fg); }
+.gcard__head > span:nth-child(2) { margin-left: auto; }
+.peek-btn { flex: none; display: inline-grid; place-items: center; width: 34px; height: 34px; margin-left: 8px; font-size: 17px; background: var(--cream); border: 2px solid var(--line); border-radius: 50%; box-shadow: 0 3px 0 var(--shadow); cursor: pointer; touch-action: none; user-select: none; -webkit-touch-callout: none; }
+.peek-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--shadow); }
+.modal { transition: opacity .12s; }
+.modal.is-peeking { opacity: .1 !important; }
+.modal.is-peeking::backdrop { background: transparent; backdrop-filter: none; }
+.name-field { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-weight: 700; }
+.name-field input { padding: 6px 10px; font: inherit; color: var(--ink); background: var(--paper); border: 2px solid var(--line); border-radius: 10px; }
+.count-picks .goal-tile__icon { display: flex; gap: 2px; flex-wrap: wrap; justify-content: center; }
 </style>
 </head>
+
 <body>
-<h1>Hộp trò chơi MONEY MISSION</h1>
-<p class="sub">Kéo để xoay hộp theo mọi hướng</p>
+<!-- =====================================================================
+     HTML: khung trang. Phần ruột (ô cờ, thẻ bài, nhật ký…) được JavaScript vẽ vào.
+     ===================================================================== -->
+<div class="app">
 
-<div class="stage" id="stage">
-  <div class="scene" id="scene">
-    <div class="box" id="box">
-      <div class="f front">
-        <div class="brand">MONEY<b>MISSION</b></div>
-        <div class="pill">30 ngày trưởng thành</div>
-        <div class="tag">Trò chơi quản lý tiền cho tuổi teen. 3–6 người, 15–20 phút một ván.</div>
-        <div class="fan"><i class="k a">A</i><i class="k b">B</i><i class="k c">C</i></div>
-        <div class="coin c3">đ</div><div class="coin c2">đ</div><div class="coin c1">đ</div>
-        <div class="chips"><i style="background:#27AE60"></i><i style="background:#3498DB"></i><i style="background:#F39C12"></i><i style="background:#E74C3C"></i><i style="background:#16A085"></i><i style="background:#8E44AD"></i></div>
+  <header class="topbar">
+    <h1 class="brand">
+      <span class="brand__coin" aria-hidden="true">₫</span>
+      <span class="brand__text">
+        <span class="brand__name">MONEY MISSION</span>
+        <span class="brand__tag">30 ngày trưởng thành</span>
+      </span>
+    </h1>
+    <p class="topbar__note">Trò chơi quản lý tiền cho tuổi teen. Tiền trong trò chơi chỉ là tiền mô phỏng.</p>
+    <button type="button" class="btn btn--small" id="restartBtn">Chơi lại</button>
+  </header>
+
+  <main class="layout">
+
+    <!-- ============ TRÁI: Bảng điều khiển ngân sách ============ -->
+    <aside class="panel panel--budget" aria-label="Bảng điều khiển ngân sách">
+      <span class="panel__tab" style="--tab: var(--t-income)">Ngân sách</span>
+
+      <ul class="roster" id="roster" aria-label="Người chơi" hidden></ul>
+
+      <div class="total">
+        <span class="total__label">Tổng còn lại</span>
+        <strong class="total__value" id="totalValue">0₫</strong>
       </div>
-      <div class="f back"><div class="in">
-        <h3>Bạn sẽ chọn cách chia nào?</h3>
-        <p>Quản lý 1.000.000đ tiền mô phỏng, rút thẻ tình huống và học qua quyết định cùng hậu quả của nó.</p>
-        <div class="opt">
-          <span style="background:#FEF3E0"><b>A</b>Nhu cầu 500K<br>Sở thích 200K<br>Tiết kiệm 300K</span>
-          <span style="background:#FCE9E7"><b>B</b>Nhu cầu 400K<br>Sở thích 500K<br>Tiết kiệm 100K</span>
-          <span style="background:#E3F4F1"><b>C</b>Nhu cầu 550K<br>Sở thích 100K<br>Tiết kiệm 350K</span>
+
+      <div id="funds"></div>
+
+      <div class="goal">
+        <div class="goal__top">
+          <span class="goal__title" id="goalName">Chưa chọn mục tiêu</span>
+          <span class="goal__target" id="goalTarget"></span>
         </div>
-        <ul><li>1 bàn chơi, 30 thẻ tình huống</li><li>Tiền mô phỏng, 4 bảng ngân sách</li><li>Tờ luật chơi và mã QR</li></ul>
-        <div class="info">Không có lựa chọn nào luôn đúng cho mọi người.</div>
-        <div class="qr">Dán mã QR luật chơi</div>
-      </div></div>
-      <div class="f right"><div class="spine"><span>MONEY <em>MISSION</em></span></div></div>
-      <div class="f left"><div class="spine"><span>30 ngày <em>trưởng thành</em></span></div></div>
-      <div class="f top"><div class="tl">MONEY <em>MISSION</em></div></div>
-      <div class="f bottom"><div class="bt">Bộ trò chơi giáo dục tài chính<br>cho học sinh. Tiền trong trò chơi chỉ là tiền mô phỏng.</div></div>
-    </div>
-    <div class="shadow"></div>
-  </div>
+        <div class="meter meter--goal"><span class="meter__fill" id="goalFill"></span></div>
+        <p class="goal__status" id="goalStatus"></p>
+      </div>
+
+      <p class="safety"><span>🛡️ Điểm an toàn tài chính</span><strong id="safetyPoints">0</strong></p>
+
+      <div class="log">
+        <h2 class="log__title">Nhật ký</h2>
+        <ol class="log__list" id="logList"></ol>
+      </div>
+    </aside>
+
+    <!-- ============ GIỮA: Bàn cờ 30 ô ============ -->
+    <section class="board-wrap" aria-label="Bàn cờ 30 ngày">
+      <div class="board" id="board">
+        <div class="board-center">
+          <div class="board-title">MONEY MISSION</div>
+          <div class="board-subtitle">30 NGÀY TRƯỞNG THÀNH</div>
+          <p class="board-message" id="boardMessage" role="status"></p>
+          <div class="progress">
+            <span>Ngày <b data-day-now>1</b>/30</span>
+            <div class="meter"><span class="meter__fill" id="dayFill"></span></div>
+          </div>
+          <ul class="legend legend--center" id="legendCenter"></ul>
+        </div>
+        <!-- 30 ô cờ và quân cờ được thêm vào đây bằng JavaScript -->
+      </div>
+      <ul class="legend legend--below" id="legendBelow"></ul>
+    </section>
+
+    <!-- ============ PHẢI: Xúc xắc và thẻ bài ============ -->
+    <aside class="side" aria-label="Xúc xắc và thẻ bài">
+      <section class="panel panel--dice">
+        <span class="panel__tab" style="--tab: var(--t-goal)">Xúc xắc</span>
+        <div class="dice-row">
+          <div class="die" id="die" role="img" aria-label="Xúc xắc"></div>
+          <div class="dice-info">
+            <p class="dice-info__day">Ngày <span data-day-now>1</span>/30</p>
+            <p class="dice-info__text" id="rollText" aria-live="polite"></p>
+          </div>
+        </div>
+        <button type="button" class="btn btn--roll" id="rollBtn">🎲 Tung xúc xắc</button>
+      </section>
+
+      <section class="panel panel--card">
+        <span class="panel__tab" style="--tab: var(--t-incident)">Thẻ bài</span>
+        <div id="lastCard"></div>
+      </section>
+
+      <section class="panel help">
+        <span class="panel__tab" style="--tab: var(--t-safety)">Luật chơi</span>
+        <details open>
+          <summary>Cách chơi nhanh</summary>
+          <p>Tung xúc xắc, đi theo chiều kim đồng hồ, rút thẻ cùng màu, chọn A/B/C rồi xem bảng ngân sách cập nhật. Phím tắt: Space tung xúc xắc, A/B/C chọn thẻ, giữ P (hoặc nút 👁️) để nhìn trộm bàn cờ.</p>
+        </details>
+        <details>
+          <summary>Quy tắc chung</summary>
+          <ul>
+            <li>Không vay tiền. Quỹ nào không đủ sẽ lấy từ quỹ khác và ghi lý do vào nhật ký.</li>
+            <li>Không có lựa chọn nào luôn đúng cho mọi người. Hãy cân nhắc hoàn cảnh, các khoản cần chi và mục tiêu của bạn.</li>
+          </ul>
+        </details>
+        <details>
+          <summary>Cách tính điểm</summary>
+          <ul>
+            <li>Đạt mục tiêu tiết kiệm: +5 điểm</li>
+            <li>Quỹ Nhu cầu không bị âm: +3 điểm</li>
+            <li>Tổng ngân sách còn lại không âm: +2 điểm</li>
+            <li>Mỗi thẻ An toàn tài chính xử lý đúng: +2 điểm</li>
+          </ul>
+          <p>Người thắng là người có nhiều điểm nhất, không phải người giữ nhiều tiền nhất.</p>
+        </details>
+      </section>
+    </aside>
+
+  </main>
 </div>
 
-<div class="ctrl" id="ctrl" role="group" aria-label="Chọn mặt hộp">
-  <button data-v="front" aria-pressed="false">Mặt trước</button>
-  <button data-v="back" aria-pressed="false">Mặt sau</button>
-  <button data-v="right" aria-pressed="false">Cạnh bên</button>
-  <button data-v="top" aria-pressed="false">Nắp hộp</button>
-  <button id="spin" aria-pressed="true">Tự xoay</button>
-</div>
-<p class="hint">Hộp khoảng 36 × 25 × 8 cm. Mặt sau có chỗ trống để bạn dán mã QR sau khi tạo.</p>
+<!-- Hộp thoại dùng chung: JavaScript đổ nội dung thẻ / form / bảng điểm vào #modalBody -->
+<dialog id="modal" class="modal" aria-label="Hộp thoại trò chơi">
+  <div id="modalBody" tabindex="-1"></div>
+</dialog>
+
+<noscript>Trò chơi cần bật JavaScript để hoạt động.</noscript>
 
 <script>
-(function(){
-  var box=document.getElementById('box'),stage=document.getElementById('stage'),scene=document.getElementById('scene');
-  var rx=-16,ry=-30,auto=true,drag=false,lx=0,ly=0,reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if(reduce)auto=false;
-  var spin=document.getElementById('spin');spin.setAttribute('aria-pressed',auto);
-  function apply(){box.style.transform='rotateX('+rx+'deg) rotateY('+ry+'deg)'}
-  function fit(){var s=Math.min(1,(window.innerWidth-40)/470);scene.style.setProperty('--s',s);stage.style.height=Math.round(400*Math.max(s,.6))+'px'}
-  stage.addEventListener('pointerdown',function(e){drag=true;lx=e.clientX;ly=e.clientY;box.style.transition='none';stage.setPointerCapture(e.pointerId);auto=false;spin.setAttribute('aria-pressed','false');clearViews()});
-  stage.addEventListener('pointermove',function(e){if(!drag)return;ry+=(e.clientX-lx)*.6;rx-=(e.clientY-ly)*.6;rx=Math.max(-90,Math.min(90,rx));lx=e.clientX;ly=e.clientY;apply()});
-  stage.addEventListener('pointerup',function(){drag=false});
-  stage.addEventListener('pointercancel',function(){drag=false});
-  var views={front:[-8,0],back:[-8,180],right:[-8,-90],top:[-80,0]};
-  var btns=[].slice.call(document.querySelectorAll('[data-v]'));
-  function clearViews(){btns.forEach(function(b){b.setAttribute('aria-pressed','false')})}
-  btns.forEach(function(b){b.addEventListener('click',function(){
-    var v=views[b.dataset.v];auto=false;spin.setAttribute('aria-pressed','false');clearViews();b.setAttribute('aria-pressed','true');
-    var cur=((ry%360)+360)%360,tgt=((v[1]%360)+360)%360,d=tgt-cur;if(d>180)d-=360;if(d<-180)d+=360;
-    box.style.transition=reduce?'none':'transform .9s cubic-bezier(.3,.7,.2,1)';rx=v[0];ry=ry+d;apply();
-  })});
-  spin.addEventListener('click',function(){auto=!auto;spin.setAttribute('aria-pressed',auto);clearViews();box.style.transition='none'});
-  function tick(){if(auto&&!drag){ry+=.35;apply()}requestAnimationFrame(tick)}
-  window.addEventListener('resize',fit);fit();apply();if(!reduce)tick();
-})();
+"use strict";
+
+/* =====================================================================
+   PHẦN 1. DỮ LIỆU TRÒ CHƠI
+   Muốn đổi số tiền, sửa ô trên bàn cờ hay thêm thẻ → chỉ cần sửa phần này.
+   ===================================================================== */
+
+const START_BUDGET = 1000000;      // ngân sách ban đầu
+const TOTAL_DAYS   = 30;           // 30 ô = 30 ngày
+const LAST_INDEX   = TOTAL_DAYS - 1;
+const BOARD_COLS   = 9;            // bàn cờ là chu vi của lưới 9 cột × 8 hàng
+const BOARD_ROWS   = 8;            // 2×(9+8)−4 = đúng 30 ô
+const ROUND_TO     = 5000;         // làm tròn khi chia theo phương án A/B/C
+const POINTS = { goal: 5, need: 3, budget: 2, safety: 2 };   // cách tính điểm
+
+// Ba quỹ
+const FUNDS = {
+  need: { name: 'Nhu cầu',   icon: '🍜', hint: 'Ăn uống, học tập, sinh hoạt' },
+  want: { name: 'Sở thích',  icon: '🎮', hint: 'Giải trí, mua sắm, vui chơi' },
+  save: { name: 'Tiết kiệm', icon: '🐷', hint: 'Mục tiêu và các khoản bất ngờ' },
+};
+const FUND_IDS = ['need', 'want', 'save'];
+
+// Luật "không vay tiền": quỹ nào thiếu thì lấy từ quỹ khác theo thứ tự này
+const FALLBACK_ORDER = {
+  need: ['want', 'save'],
+  want: ['save', 'need'],
+  save: ['want', 'need'],
+};
+
+// Ba phương án chia 1.000.000₫ (tỉ lệ % cho Nhu cầu / Sở thích / Tiết kiệm)
+const BUDGET_PLANS = [
+  { id: 'A', name: 'Cân bằng',          ratio: [50, 20, 30] },   // 500.000 / 200.000 / 300.000
+  { id: 'B', name: 'Ưu tiên sở thích',  ratio: [40, 50, 10] },   // 400.000 / 500.000 / 100.000
+  { id: 'C', name: 'Ưu tiên tiết kiệm', ratio: [55, 10, 35] },   // 550.000 / 100.000 / 350.000
+];
+
+// Năm thẻ Mục tiêu
+const GOALS = [
+  { id: 26, icon: '📚', name: 'Khóa học',          target: 300000, desc: 'Tiết kiệm cho một khóa học kỹ năng.',                     lesson: 'Mục tiêu rõ ràng giúp bạn biết mình đang tiết kiệm vì điều gì.' },
+  { id: 27, icon: '🎒', name: 'Đồ dùng cần thiết', target: 400000, desc: 'Tiết kiệm mua một món đồ cần thiết cho học tập.',          lesson: 'Hãy ưu tiên món đồ bạn thật sự cần.' },
+  { id: 28, icon: '🏕️', name: 'Dã ngoại lớp',      target: 250000, desc: 'Tiết kiệm để tham gia một hoạt động dã ngoại của lớp.',   lesson: 'Trải nghiệm cùng bạn bè cũng là một mục tiêu đáng tiết kiệm.' },
+  { id: 29, icon: '📖', name: 'Sách và tài liệu',  target: 200000, desc: 'Tiết kiệm mua bộ sách bạn muốn đọc lâu nay.',             lesson: 'Mục tiêu nhỏ vẫn là bước khởi đầu tốt.' },
+  { id: 30, icon: '☂️', name: 'Quỹ dự phòng',      target: 300000, desc: 'Xây dựng một quỹ dự phòng cho những chi phí bất ngờ.',    lesson: 'Quỹ dự phòng giúp bạn bình tĩnh khi có biến cố.' },
+];
+
+// Bảy loại ô (cũng là loại thẻ). `color` là tên biến màu trong CSS.
+const CELL_TYPES = {
+  start:    { name: 'Bắt đầu',            short: 'Bắt đầu',  icon: '🚩', color: '--t-start',    desc: 'Nhận 1.000.000₫ và chia vào 3 quỹ.' },
+  cost:     { name: 'Chi phí cần thiết',  short: 'Chi phí',  icon: '🧾', color: '--t-cost',     desc: 'Trả số tiền ghi trên ô từ quỹ Nhu cầu.' },
+  shopping: { name: 'Quyết định mua sắm', short: 'Mua sắm',  icon: '🛍️', color: '--t-shopping', desc: 'Rút thẻ, chọn A / B / C.' },
+  incident: { name: 'Biến cố bất ngờ',    short: 'Biến cố',  icon: '⚡', color: '--t-incident', desc: 'Rút thẻ, xử lý chi phí hoặc tình huống ngoài kế hoạch.' },
+  income:   { name: 'Thu nhập',           short: 'Thu nhập', icon: '💰', color: '--t-income',   desc: 'Rút thẻ thu nhập, chia tiền vào 3 quỹ.' },
+  safety:   { name: 'An toàn tài chính',  short: 'An toàn',  icon: '🛡️', color: '--t-safety',   desc: 'Nhận diện lời mời đáng ngờ, bảo vệ tiền của mình.' },
+  goal:     { name: 'Mục tiêu tiết kiệm', short: 'Mục tiêu', icon: '🎯', color: '--t-goal',     desc: 'Được chuyển thêm tiền từ Sở thích sang Tiết kiệm (không bắt buộc).' },
+};
+
+// 30 ô theo đúng bàn chơi trong file PDF. Ô "cost" có thêm số tiền phải trả.
+const BOARD = [
+  { type: 'start' },                 // Ngày 1
+  { type: 'cost', amount: 30000 },   // Ngày 2
+  { type: 'shopping' },              // Ngày 3
+  { type: 'incident' },              // Ngày 4
+  { type: 'safety' },                // Ngày 5
+  { type: 'shopping' },              // Ngày 6
+  { type: 'goal' },                  // Ngày 7
+  { type: 'cost', amount: 40000 },   // Ngày 8
+  { type: 'incident' },              // Ngày 9
+  { type: 'income' },                // Ngày 10
+  { type: 'shopping' },              // Ngày 11
+  { type: 'safety' },                // Ngày 12
+  { type: 'cost', amount: 50000 },   // Ngày 13
+  { type: 'incident' },              // Ngày 14
+  { type: 'goal' },                  // Ngày 15
+  { type: 'income' },                // Ngày 16
+  { type: 'shopping' },              // Ngày 17
+  { type: 'cost', amount: 30000 },   // Ngày 18
+  { type: 'safety' },                // Ngày 19
+  { type: 'incident' },              // Ngày 20
+  { type: 'shopping' },              // Ngày 21
+  { type: 'goal' },                  // Ngày 22
+  { type: 'cost', amount: 40000 },   // Ngày 23
+  { type: 'incident' },              // Ngày 24
+  { type: 'shopping' },              // Ngày 25
+  { type: 'income' },                // Ngày 26
+  { type: 'safety' },                // Ngày 27
+  { type: 'cost', amount: 50000 },   // Ngày 28
+  { type: 'shopping' },              // Ngày 29
+  { type: 'goal' },                  // Ngày 30
+];
+
+/*
+  Mảng thẻ sự kiện (25 thẻ). Mỗi thẻ là một object:
+    id, type, title, text, lesson
+    options: các lựa chọn A/B/C, mỗi lựa chọn có
+        effects  = tiền thay đổi theo quỹ, ví dụ { want: -150000 } (âm = trừ, dương = cộng)
+        warn     = (tùy chọn) dòng cảnh báo hiện cạnh lựa chọn
+        correct  = (chỉ thẻ An toàn tài chính) true nếu xử lý đúng → +2 điểm
+    income: (chỉ thẻ Thu nhập) số tiền nhận được, người chơi tự chia vào 3 quỹ
+*/
+const CARDS = [
+  /* ---------- QUYẾT ĐỊNH MUA SẮM ---------- */
+  { id: 1, type: 'shopping', title: 'Giảm giá 50%',
+    text: 'Một món đồ không nằm trong kế hoạch được giảm từ 300.000₫ còn 150.000₫. Bạn sẽ mua ngay, chờ thêm hay bỏ qua?',
+    options: [
+      { key: 'A', label: 'Mua ngay',                                effects: { want: -150000 } },
+      { key: 'B', label: 'Ghi vào danh sách “muốn mua”, chờ thêm',   effects: {} },
+      { key: 'C', label: 'Bỏ qua, chuyển 50.000₫ vào Tiết kiệm',     effects: { save: 50000 } },
+    ],
+    lesson: 'Giảm giá không đồng nghĩa với tiết kiệm nếu bạn không cần món đồ đó.' },
+
+  { id: 2, type: 'shopping', title: 'Bạn bè rủ mua đồ',
+    text: 'Nhóm bạn rủ mua áo lớp 120.000₫ nhưng ngân sách của bạn đang dành cho mục tiêu khác.',
+    options: [
+      { key: 'A', label: 'Mua theo bạn',              effects: { want: -120000 } },
+      { key: 'B', label: 'Từ chối lịch sự',           effects: {} },
+      { key: 'C', label: 'Đề xuất bản đơn giản hơn',  effects: { want: -60000 } },
+    ],
+    lesson: 'Bạn có thể từ chối lịch sự hoặc đề xuất lựa chọn phù hợp ngân sách.' },
+
+  { id: 3, type: 'shopping', title: 'Flash sale 10 phút',
+    text: 'Ứng dụng báo “chỉ còn 10 phút”, tai nghe giá 90.000₫. Bạn chưa có kế hoạch mua.',
+    options: [
+      { key: 'A', label: 'Mua ngay',                                   effects: { want: -90000 } },
+      { key: 'B', label: 'Tắt ứng dụng, nghỉ 10 phút rồi quyết định',  effects: {} },
+      { key: 'C', label: 'Hỏi người lớn trước khi mua',                effects: {} },
+    ],
+    lesson: 'Đồng hồ đếm ngược tạo áp lực. Dừng lại một chút giúp quyết định tỉnh táo hơn.' },
+
+  { id: 4, type: 'shopping', title: 'Mua 1 tặng 1',
+    text: 'Quán trà sữa đang mua 1 tặng 1. Một ly giá 35.000₫, bạn chỉ định uống một ly.',
+    options: [
+      { key: 'A', label: 'Mua 2 ly vì được tặng', effects: { want: -70000 } },
+      { key: 'B', label: 'Mua 1 ly',              effects: { want: -35000 } },
+      { key: 'C', label: 'Hôm nay bỏ qua',        effects: {} },
+    ],
+    lesson: 'Khuyến mãi dễ khiến ta mua nhiều hơn dự định.' },
+
+  { id: 5, type: 'shopping', title: 'Đồ dùng học tập',
+    text: 'Bút và vở sắp hết. Loại thường giá 80.000₫, loại thương hiệu nổi tiếng giá 200.000₫.',
+    options: [
+      { key: 'A', label: 'Loại thường',               effects: { need: -80000 } },
+      { key: 'B', label: 'Loại thương hiệu',          effects: { need: -200000 } },
+      { key: 'C', label: 'Mượn tạm bạn, mua sau',     effects: {} },
+    ],
+    lesson: 'Chọn theo nhu cầu sử dụng, không chỉ theo thương hiệu.' },
+
+  { id: 6, type: 'shopping', title: 'Cặp mới hay cặp cũ?',
+    text: 'Cặp của bạn bị hỏng khóa. Cặp mới 250.000₫, cặp cũ còn tốt của anh chị cho lại thì miễn phí.',
+    options: [
+      { key: 'A', label: 'Mua cặp mới',             effects: { need: -250000 } },
+      { key: 'B', label: 'Dùng cặp cũ, sửa khóa',   effects: { need: -20000 } },
+      { key: 'C', label: 'Mua cặp mới rẻ hơn',      effects: { need: -150000 } },
+    ],
+    lesson: 'Đồ cũ còn dùng tốt cũng là một cách chi tiêu thông minh.' },
+
+  { id: 7, type: 'shopping', title: 'Món đồ đang hot',
+    text: 'Mạng xã hội đang khoe đôi giày giá 450.000₫. Nhiều bạn trong lớp đã có.',
+    options: [
+      { key: 'A', label: 'Mua ngay',                          effects: { want: -450000 } },
+      { key: 'B', label: 'Chờ 2 tuần xem còn thích không',    effects: {} },
+      { key: 'C', label: 'Tìm món tương tự giá 150.000₫',     effects: { want: -150000 } },
+    ],
+    lesson: 'Xu hướng thay đổi rất nhanh, nhu cầu thật của bạn mới là điều quan trọng.' },
+
+  { id: 8, type: 'shopping', title: 'Gói vật phẩm trong game',
+    text: 'Trò chơi bán gói vật phẩm 100.000₫ “chỉ hôm nay”.',
+    options: [
+      { key: 'A', label: 'Mua gói',                                 effects: { want: -100000 } },
+      { key: 'B', label: 'Không mua',                               effects: {} },
+      { key: 'C', label: 'Đặt giới hạn 20.000₫/tháng cho game',     effects: { want: -20000 } },
+    ],
+    lesson: 'Hãy đặt sẵn giới hạn cho quỹ Sở thích trước khi bị cuốn vào.' },
+
+  /* ---------- BIẾN CỐ BẤT NGỜ ---------- */
+  { id: 9, type: 'incident', title: 'Xe đạp xẹp lốp',
+    text: 'Xe đạp đi học bị xẹp lốp, sửa mất 50.000₫. Bạn phải xử lý ngay.',
+    options: [
+      { key: 'A', label: 'Trả bằng quỹ Tiết kiệm',  effects: { save: -50000 } },
+      { key: 'B', label: 'Trả bằng quỹ Sở thích',   effects: { want: -50000 } },
+      { key: 'C', label: 'Hỏi giá tiệm khác',       effects: { need: -35000 } },
+    ],
+    lesson: 'Quỹ dự phòng giúp bạn xử lý chi phí bất ngờ mà không rối kế hoạch.' },
+
+  { id: 10, type: 'incident', title: 'Quà sinh nhật bạn',
+    text: 'Bạn thân sắp sinh nhật. Bạn muốn tặng quà nhưng chưa có kế hoạch cho khoản này.',
+    options: [
+      { key: 'A', label: 'Quà tự làm',               effects: { want: -20000 } },
+      { key: 'B', label: 'Mua quà đắt tiền',         effects: { want: -150000 } },
+      { key: 'C', label: 'Góp quà chung với nhóm',   effects: { want: -50000 } },
+    ],
+    lesson: 'Tấm lòng không phụ thuộc vào giá tiền. Món quà vẫn nên nằm trong ngân sách.' },
+
+  { id: 11, type: 'incident', title: 'Hỏng sạc điện thoại',
+    text: 'Sạc điện thoại bị hỏng. Hàng chính hãng 100.000₫, hàng không rõ nguồn gốc 40.000₫.',
+    options: [
+      { key: 'A', label: 'Mua hàng chính hãng',                  effects: { need: -100000 } },
+      { key: 'B', label: 'Mua hàng rẻ không rõ nguồn gốc',       effects: { need: -40000 }, warn: 'Rủi ro hỏng sớm' },
+      { key: 'C', label: 'Mượn sạc tạm, hỏi người lớn',          effects: {} },
+    ],
+    lesson: 'Rẻ nhất chưa chắc là rẻ nhất khi tính cả độ bền và an toàn.' },
+
+  { id: 12, type: 'incident', title: 'Hết tiền Sở thích',
+    text: 'Quỹ Sở thích của bạn đã hết nhưng nhóm bạn rủ đi xem phim, vé 90.000₫.',
+    options: [
+      { key: 'A', label: 'Đi, lấy từ quỹ Tiết kiệm',    effects: { save: -90000 } },
+      { key: 'B', label: 'Hẹn đợt sau',                 effects: {} },
+      { key: 'C', label: 'Đề xuất hoạt động miễn phí',  effects: {} },
+    ],
+    lesson: 'Dùng tiền tiết kiệm cho sở thích có thể làm bạn xa mục tiêu.' },
+
+  { id: 13, type: 'incident', title: 'Tài liệu học thêm',
+    text: 'Lớp học thêm cần mua tài liệu 120.000₫.',
+    options: [
+      { key: 'A', label: 'Mua tài liệu',                       effects: { need: -120000 } },
+      { key: 'B', label: 'Photo chung với bạn',                effects: { need: -40000 } },
+      { key: 'C', label: 'Hỏi thầy cô có bản mượn không',      effects: {} },
+    ],
+    lesson: 'Luôn hỏi xem có cách đáp ứng nhu cầu với chi phí thấp hơn không.' },
+
+  { id: 14, type: 'incident', title: 'Món đồ bị lỗi',
+    text: 'Bạn mua một món đồ 100.000₫ nhưng về nhà phát hiện bị lỗi. Bạn còn giữ hóa đơn.',
+    options: [
+      { key: 'A', label: 'Bỏ đó và quên đi',  effects: {} },
+      { key: 'B', label: 'Mang đi đổi trả',   effects: { want: 100000 } },
+      { key: 'C', label: 'Mua cái mới',       effects: { want: -100000 } },
+    ],
+    lesson: 'Giữ hóa đơn giúp bạn bảo vệ quyền lợi của mình.' },
+
+  /* ---------- THU NHẬP (người chơi tự chia tiền vào 3 quỹ) ---------- */
+  { id: 15, type: 'income', title: 'Tiền tiêu vặt', income: 250000,
+    text: 'Bạn nhận 250.000₫ tiền tiêu vặt trong tuần. Hãy chia vào Nhu cầu, Sở thích, Tiết kiệm.',
+    lesson: 'Chia tiền ngay khi nhận giúp bạn khỏi tiêu theo cảm hứng.' },
+
+  { id: 16, type: 'income', title: 'Tiền mừng sinh nhật', income: 200000,
+    text: 'Bạn nhận 200.000₫ tiền mừng sinh nhật từ người thân.',
+    hint: 'Gợi ý: không bắt buộc, nhưng hãy cân nhắc cho quỹ Tiết kiệm.',
+    lesson: 'Khoản thu bất thường là cơ hội để tiến gần mục tiêu hơn.' },
+
+  { id: 17, type: 'income', title: 'Phụ giúp việc nhà', income: 100000,
+    text: 'Bạn phụ giúp gia đình dọn dẹp cuối tuần và nhận 100.000₫.',
+    lesson: 'Tiền kiếm được từ công sức nên được dùng có kế hoạch.' },
+
+  { id: 18, type: 'income', title: 'Bán đồ cũ', income: 120000,
+    text: 'Bạn bán lại một món đồ không dùng nữa cho người quen với giá 120.000₫.',
+    lesson: 'Đồ không dùng có thể trở thành nguồn thu nhỏ.' },
+
+  { id: 19, type: 'income', title: 'Thưởng học tập', income: 150000,
+    text: 'Bạn đạt kết quả tốt trong một bài kiểm tra và nhận phần thưởng mô phỏng 150.000₫.',
+    lesson: 'Phần thưởng nên chia cho cả hiện tại và tương lai.' },
+
+  /* ---------- AN TOÀN TÀI CHÍNH (correct: true = xử lý đúng, +2 điểm) ----------
+     Các khoản mất tiền do lừa đảo mặc định trừ vào quỹ Sở thích; nếu quỹ này không đủ
+     thì luật "không vay tiền" sẽ lấy tiếp từ quỹ khác. */
+  { id: 20, type: 'safety', title: 'Việc kiếm tiền online',
+    text: 'Có tin nhắn: “Làm cộng tác viên thích video, nhận 500.000₫/ngày, nạp trước 200.000₫ để kích hoạt”.',
+    options: [
+      { key: 'A', label: 'Nạp thử để xem sao',       effects: { want: -200000 }, warn: 'Không lấy lại được tiền' },
+      { key: 'B', label: 'Không nạp, báo người lớn', effects: {}, correct: true },
+      { key: 'C', label: 'Rủ bạn cùng nạp',          effects: { want: -200000 }, warn: 'Bạn bè cũng mất tiền' },
+    ],
+    lesson: 'Việc kiếm tiền thật không bắt bạn phải chuyển tiền trước.' },
+
+  { id: 21, type: 'safety', title: 'Trúng thưởng bất ngờ',
+    text: 'Bạn nhận tin “Bạn đã trúng điện thoại, đóng phí 50.000₫ qua đường link để nhận quà”.',
+    options: [
+      { key: 'A', label: 'Bấm vào link và nhập thông tin', effects: { want: -50000 } },
+      { key: 'B', label: 'Xóa tin, không bấm link',        effects: {}, correct: true },
+      { key: 'C', label: 'Hỏi người lớn',                  effects: {}, correct: true },
+    ],
+    lesson: 'Phần thưởng nhưng đòi phí trước là dấu hiệu đáng ngờ.' },
+
+  { id: 22, type: 'safety', title: 'Xin mã OTP',
+    text: 'Một người tự xưng là bạn của bạn nhắn xin mã OTP vừa gửi về điện thoại để “xác nhận giúp”.',
+    options: [
+      { key: 'A', label: 'Gửi mã cho nhanh',                                    effects: { want: -100000 } },
+      { key: 'B', label: 'Không chia sẻ mã, gọi trực tiếp cho bạn kiểm tra',    effects: {}, correct: true },
+      { key: 'C', label: 'Gửi một nửa mã',                                      effects: { want: -100000 } },
+    ],
+    lesson: 'Mã OTP là chìa khóa cá nhân. Không chia sẻ cho bất kỳ ai.' },
+
+  // PDF không đánh dấu +2 điểm cho thẻ này; mặc định B và C là cách xử lý đúng.
+  { id: 23, type: 'safety', title: 'Bạn xin mượn tiền',
+    text: 'Một bạn nhờ cho mượn 200.000₫ và hứa sẽ trả sớm.',
+    options: [
+      { key: 'A', label: 'Cho mượn toàn bộ, không ghi lại',     effects: { want: -200000 } },
+      { key: 'B', label: 'Cho mượn 50.000₫, ghi rõ ngày trả',   effects: { want: -50000 }, correct: true },
+      { key: 'C', label: 'Từ chối lịch sự',                     effects: {}, correct: true },
+    ],
+    lesson: 'Hãy chỉ cho mượn số tiền mình có thể chấp nhận mất, và nói rõ thỏa thuận.' },
+
+  { id: 24, type: 'safety', title: 'Shop giá rẻ bất thường',
+    text: 'Một trang bán hàng lạ rao tai nghe giá chỉ bằng nửa giá thị trường và yêu cầu chuyển khoản trước.',
+    options: [
+      { key: 'A', label: 'Chuyển khoản ngay',                          effects: { want: -150000 } },
+      { key: 'B', label: 'Kiểm tra đánh giá, chọn nơi uy tín',         effects: {}, correct: true },
+      { key: 'C', label: 'Hỏi người lớn',                              effects: {}, correct: true },
+    ],
+    lesson: 'Giá quá rẻ so với thị trường là dấu hiệu cần kiểm tra kỹ.' },
+
+  // PDF không ghi số tiền ở lựa chọn A: tự đặt 200.000₫ (món đồ 150.000₫ + 50.000₫ lãi và phí).
+  { id: 25, type: 'safety', title: 'Vay tiền nhanh',
+    text: 'Một ứng dụng quảng cáo “vay tiền ngay, không cần giấy tờ” để bạn mua món đồ đang thích.',
+    options: [
+      { key: 'A', label: 'Vay để mua',                              effects: { want: -200000 }, warn: 'Về sau phải trả nhiều hơn số tiền vay' },
+      { key: 'B', label: 'Từ chối, tiết kiệm dần cho món đồ',       effects: {}, correct: true },
+      { key: 'C', label: 'Hỏi người lớn',                           effects: {}, correct: true },
+    ],
+    lesson: 'Trong trò chơi này, người chơi không vay tiền. Hãy tiết kiệm để đạt mục tiêu.' },
+];
+
+
+/* =====================================================================
+   PHẦN 2. TRẠNG THÁI TRÒ CHƠI
+   Mọi thứ thay đổi trong ván chơi đều nằm trong object `state`.
+   ===================================================================== */
+
+const MAX_PLAYERS  = 8;
+const PLAYER_COLORS = ['#ff6fae', '#4f8cff', '#25c47a', '#ffd23f', '#ff7a6b', '#c3a2ff', '#5fd8e6', '#ffa45c'];
+// Các trường riêng của từng người chơi (state.funds, state.position… luôn trỏ tới người đang tới lượt)
+const PLAYER_KEYS = ['funds', 'goal', 'position', 'lastRoll', 'lastEvent', 'log', 'safetyCorrect', 'safetyTotal'];
+
+function createPlayer(i) {
+  return {
+    name: `Người chơi ${i + 1}`, color: PLAYER_COLORS[i], done: false, tokenEl: null,
+    funds: { need: 0, want: 0, save: 0 },
+    goal: null,                // thẻ Mục tiêu đã chọn
+    position: 0,               // chỉ số ô hiện tại (0 = Ngày 1, 29 = Ngày 30)
+    lastRoll: null,
+    lastEvent: null,           // thẻ / ô gần nhất, hiển thị ở cột phải
+    log: [],                   // nhật ký các khoản thu chi
+    safetyCorrect: 0,          // số thẻ An toàn tài chính xử lý đúng
+    safetyTotal: 0,            // số thẻ An toàn tài chính đã gặp
+  };
+}
+
+function createState(playerCount = 1) {
+  const s = {
+    phase: 'setup',            // 'setup' → 'playing' → 'finished'
+    busy: false,               // true khi đang tung / di chuyển / xử lý thẻ → khóa nút xúc xắc
+    message: '',
+    drawnCardIds: new Set(),   // thẻ đã rút: bộ bài dùng chung cho mọi người chơi
+    current: 0,                // chỉ số người đang tới lượt
+    players: Array.from({ length: Math.min(MAX_PLAYERS, Math.max(1, playerCount)) }, (_, i) => createPlayer(i)),
+  };
+  Object.defineProperty(s, 'player', { get() { return this.players[this.current]; } });
+  // Lối tắt: toàn bộ code cũ (spend, applyEffects, addLog, các thẻ…) tự động làm việc với người đang tới lượt
+  PLAYER_KEYS.forEach(key => Object.defineProperty(s, key, {
+    enumerable: true,
+    get() { return this.player[key]; },
+    set(value) { this.player[key] = value; },
+  }));
+  return s;
+}
+let state = createState();
+
+
+/* =====================================================================
+   PHẦN 3. HÀM TIỆN ÍCH
+   ===================================================================== */
+
+const $  = (selector, root = document) => root.querySelector(selector);
+const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+const clamp = (n, min, max) => Math.min(max, Math.max(min, n));
+const pad2 = n => String(n).padStart(2, '0');
+const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+// 1000000 → "1.000.000₫"; số âm dùng dấu trừ "−"
+const group  = n => String(Math.abs(Math.round(n))).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+const money  = n => (n < 0 ? '−' : '') + group(n) + '₫';
+const signed = n => (n > 0 ? '+' : n < 0 ? '−' : '') + group(n) + '₫';
+const shortMoney = n => Math.round(n / 1000) + 'K';
+
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const sleep = ms => new Promise(resolve => setTimeout(resolve, reduceMotion ? 0 : ms));
+
+// Tạo phần tử DOM từ một đoạn HTML (chỉ dùng với nội dung do chương trình tự sinh)
+function html(markup) {
+  const template = document.createElement('template');
+  template.innerHTML = markup.trim();
+  return template.content.firstElementChild;
+}
+
+// Chip hiển thị tiền thay đổi, ví dụ "−150.000₫ Sở thích"
+function chip(amount, fundId) {
+  const kind = amount > 0 ? 'pos' : 'neg';
+  return `<span class="chip chip--${kind}"><i class="dot dot--${fundId}"></i>${signed(amount)} ${FUNDS[fundId].name}</span>`;
+}
+// Các chip cho một lựa chọn (trước khi bấm)
+function chipsFromEffects(effects) {
+  const entries = Object.entries(effects);
+  if (entries.length === 0) return '<span class="chip chip--zero">0₫</span>';
+  return entries.map(([fund, amount]) => chip(amount, fund)).join('');
+}
+// Các chip cho kết quả thật sau khi bấm (đã tính cả phần lấy từ quỹ khác)
+function chipsFromChanges(changes) {
+  if (changes.length === 0) return '<span class="chip chip--zero">Không đổi, 0₫</span>';
+  return changes.map(c => chip(c.delta, c.fund)).join('');
+}
+
+
+/* =====================================================================
+   PHẦN 4. LOGIC TIỀN: không vay tiền, quỹ thiếu thì lấy từ quỹ khác
+   ===================================================================== */
+
+/**
+ * Trừ `cost` đồng từ quỹ `fundId`.
+ *  1) Trừ trong chính quỹ đó (không để âm).
+ *  2) Thiếu → lấy từ quỹ khác theo FALLBACK_ORDER và ghi chú lý do.
+ *  3) Hết sạch tiền cả 3 quỹ mà vẫn thiếu → quỹ bị ghi âm (không được vay).
+ */
+function spend(fundId, cost, notes) {
+  let remaining = cost;
+
+  const own = Math.min(Math.max(state.funds[fundId], 0), remaining);
+  state.funds[fundId] -= own;
+  remaining -= own;
+
+  for (const otherId of FALLBACK_ORDER[fundId]) {
+    if (remaining <= 0) break;
+    const take = Math.min(Math.max(state.funds[otherId], 0), remaining);
+    if (take > 0) {
+      state.funds[otherId] -= take;
+      remaining -= take;
+      notes.push(`Quỹ ${FUNDS[fundId].name} không đủ nên lấy ${money(take)} từ quỹ ${FUNDS[otherId].name}.`);
+    }
+  }
+
+  if (remaining > 0) {
+    state.funds[fundId] -= remaining;
+    notes.push(`Hết tiền! Còn thiếu ${money(remaining)} và bạn không được vay, nên quỹ ${FUNDS[fundId].name} bị âm.`);
+  }
+}
+
+/**
+ * Áp dụng một nhóm thay đổi tiền, ví dụ { want: -150000, save: 50000 }.
+ * Trả về { changes, notes }: số tiền mỗi quỹ thực sự thay đổi + các ghi chú lý do.
+ */
+function applyEffects(effects) {
+  const before = { ...state.funds };
+  const notes = [];
+
+  for (const [fundId, amount] of Object.entries(effects)) {
+    if (amount >= 0) state.funds[fundId] += amount;
+    else spend(fundId, -amount, notes);
+  }
+
+  const changes = FUND_IDS
+    .map(id => ({ fund: id, delta: state.funds[id] - before[id] }))
+    .filter(change => change.delta !== 0);
+  return { changes, notes };
+}
+
+// Rút ngẫu nhiên một thẻ theo loại; chưa rút hết thì không lặp lại thẻ cũ
+function drawCard(type) {
+  const all = CARDS.filter(card => card.type === type);
+  let pool = all.filter(card => !state.drawnCardIds.has(card.id));
+  if (pool.length === 0) {
+    all.forEach(card => state.drawnCardIds.delete(card.id));
+    pool = all;
+  }
+  const card = pool[randomInt(0, pool.length - 1)];
+  state.drawnCardIds.add(card.id);
+  return card;
+}
+
+function addLog({ title, changes = [], notes = [] }) {
+  state.log.unshift({ day: state.position + 1, title, changes, notes });
+}
+
+
+/* =====================================================================
+   PHẦN 5. VẼ GIAO DIỆN (render)
+   Bàn cờ và các khối quỹ được tạo MỘT LẦN lúc khởi động; sau đó chỉ cập nhật chữ và class.
+   ===================================================================== */
+
+const boardEl    = $('#board');
+const dieEl      = $('#die');
+const rollBtn    = $('#rollBtn');
+const restartBtn = $('#restartBtn');
+const cellEls    = [];                 // 30 phần tử ô cờ
+const fundNodes  = {};                 // phần tử hiển thị từng quỹ
+const shownFunds = { need: 0, want: 0, save: 0 };   // số tiền đang hiển thị (để nháy khi đổi)
+let shownPlayer = null;                 // người chơi mà khối ngân sách đang hiển thị
+
+// Vị trí ô số i trên lưới 9×8, đi theo chiều kim đồng hồ từ góc trên-trái
+function getGridPosition(i) {
+  const TOP    = BOARD_COLS;                 // ô 0..8   : hàng trên, trái → phải
+  const RIGHT  = TOP + BOARD_ROWS - 1;       // ô 9..15  : cột phải, trên → dưới
+  const BOTTOM = RIGHT + BOARD_COLS - 1;     // ô 16..23 : hàng dưới, phải → trái
+  if (i < TOP)    return { col: i + 1,                          row: 1 };
+  if (i < RIGHT)  return { col: BOARD_COLS,                     row: i - TOP + 2 };
+  if (i < BOTTOM) return { col: BOARD_COLS - 1 - (i - RIGHT),   row: BOARD_ROWS };
+  return                 { col: 1,                              row: BOARD_ROWS - 1 - (i - BOTTOM) };   // ô 24..29: cột trái, dưới → trên
+}
+
+function buildBoard() {
+  BOARD.forEach((cell, i) => {
+    const meta = CELL_TYPES[cell.type];
+    const { col, row } = getGridPosition(i);
+    const label = cell.type === 'cost' ? `${meta.short} −${cell.amount / 1000}K` : meta.short;
+    const tip = `Ngày ${i + 1}: ${meta.name}. ${cell.type === 'cost' ? `Trả ${money(cell.amount)} từ quỹ Nhu cầu.` : meta.desc}`;
+
+    const el = html(`
+      <div class="cell" style="--c:${col}; --r:${row}; --cell-bg: var(${meta.color})" title="${tip}" role="img" aria-label="${tip}">
+        <div class="cell__top">
+          <span class="cell__day">${i + 1}</span>
+          <span class="cell__icon" aria-hidden="true">${meta.icon}</span>
+        </div>
+        <span class="cell__label">${label}</span>
+      </div>`);
+    boardEl.append(el);
+    cellEls.push(el);
+  });
+
+}
+
+function buildLegend() {
+  const items = Object.entries(CELL_TYPES)
+    .filter(([key]) => key !== 'start')
+    .map(([, t]) => `
+      <li class="legend__item" style="--tcolor: var(${t.color})">
+        <span class="legend__icon" aria-hidden="true">${t.icon}</span>
+        <span class="legend__text"><b>${t.name}</b><small>${t.desc}</small></span>
+      </li>`)
+    .join('');
+  $('#legendCenter').innerHTML = items;
+  $('#legendBelow').innerHTML = items;
+}
+
+function buildFundBlocks() {
+  FUND_IDS.forEach(id => {
+    const node = html(`
+      <div class="fund fund--${id}">
+        <div class="fund__top">
+          <span class="fund__icon" aria-hidden="true">${FUNDS[id].icon}</span>
+          <span class="fund__name">${FUNDS[id].name}</span>
+          <strong class="fund__amount">0₫</strong>
+        </div>
+        <div class="meter"><span class="meter__fill"></span></div>
+        <p class="fund__hint">${FUNDS[id].hint}</p>
+      </div>`);
+    $('#funds').append(node);
+    fundNodes[id] = { root: node, amount: $('.fund__amount', node), fill: $('.meter__fill', node) };
+  });
+}
+
+// Nháy xanh khi quỹ tăng, nháy đỏ khi quỹ giảm
+function flash(node, direction) {
+  node.classList.remove('flash-up', 'flash-down');
+  void node.offsetWidth;                         // buộc trình duyệt chạy lại animation
+  node.classList.add(`flash-${direction}`);
+}
+
+function renderBudget() {
+  const f = state.funds;
+  const total = f.need + f.want + f.save;
+
+  const totalEl = $('#totalValue');
+  totalEl.textContent = money(total);
+  totalEl.classList.toggle('is-negative', total < 0);
+
+  FUND_IDS.forEach(id => {
+    const node = fundNodes[id];
+    node.amount.textContent = money(f[id]);
+    node.amount.classList.toggle('is-negative', f[id] < 0);
+    node.fill.style.width = `${clamp(f[id] / START_BUDGET * 100, 0, 100)}%`;
+    if (shownPlayer === state.player && f[id] !== shownFunds[id]) {
+      flash(node.root, f[id] > shownFunds[id] ? 'up' : 'down');
+      floatMoney(node.root, f[id] - shownFunds[id]);
+    }
+    shownFunds[id] = f[id];
+  });
+  shownPlayer = state.player;
+  renderRoster();
+
+  // Mục tiêu tiết kiệm
+  const goal = state.goal;
+  if (goal) {
+    $('#goalName').textContent = `${goal.icon} ${goal.name}`;
+    $('#goalTarget').textContent = `cần ${money(goal.target)}`;
+    $('#goalFill').style.width = `${clamp(f.save / goal.target * 100, 0, 100)}%`;
+    $('#goalStatus').textContent = f.save >= goal.target
+      ? 'Quỹ Tiết kiệm đã đủ cho mục tiêu.'
+      : `Còn thiếu ${money(goal.target - f.save)}.`;
+  } else {
+    $('#goalName').textContent = 'Chưa chọn mục tiêu';
+    $('#goalTarget').textContent = '';
+    $('#goalFill').style.width = '0%';
+    $('#goalStatus').textContent = '';
+  }
+
+  $('#safetyPoints').textContent = `+${state.safetyCorrect * POINTS.safety}`;
+}
+
+function renderLog() {
+  const list = $('#logList');
+  if (state.log.length === 0) {
+    list.innerHTML = '<li class="empty">Chưa có khoản thu chi nào.</li>';
+    return;
+  }
+  list.innerHTML = state.log.map(entry => `
+    <li class="log__item">
+      <span class="log__day">Ngày ${entry.day}</span>
+      <div class="log__body">
+        <span class="log__name">${entry.title}</span>
+        <div class="chips">${chipsFromChanges(entry.changes)}</div>
+        ${entry.notes.map(n => `<span class="log__note">${n}</span>`).join('')}
+      </div>
+    </li>`).join('');
+}
+
+function renderBoard() {
+  cellEls.forEach((el, i) => {
+    el.classList.toggle('cell--active', i === state.position);
+    el.classList.toggle('cell--past', i < state.position);
+  });
+  layoutTokens();
+  $$('[data-day-now]').forEach(el => { el.textContent = state.position + 1; });
+  $('#dayFill').style.width = `${state.position / LAST_INDEX * 100}%`;
+}
+
+// Mặt xúc xắc: số chấm theo từng ô của lưới 3×3
+const PIPS = { 1: [4], 2: [0, 8], 3: [0, 4, 8], 4: [0, 2, 6, 8], 5: [0, 2, 4, 6, 8], 6: [0, 2, 3, 5, 6, 8] };
+function renderDie(value) {
+  if (!value) {
+    dieEl.innerHTML = '<span class="die__q">?</span>';
+    dieEl.setAttribute('aria-label', 'Xúc xắc chưa tung');
+    return;
+  }
+  dieEl.innerHTML = Array.from({ length: 9 }, (_, i) => `<span class="pip${PIPS[value].includes(i) ? ' on' : ''}"></span>`).join('');
+  dieEl.setAttribute('aria-label', `Xúc xắc: ${value}`);
+}
+
+function renderLastEvent() {
+  const box = $('#lastCard');
+  const ev = state.lastEvent;
+  if (!ev) {
+    box.innerHTML = '<p class="empty">Chưa có thẻ nào. Tung xúc xắc để rút thẻ đầu tiên.</p>';
+    return;
+  }
+  const meta = CELL_TYPES[ev.type];
+  box.innerHTML = `
+    <article class="mini-card" style="--tcolor: var(${meta.color})">
+      <header class="mini-card__head"><span>${meta.icon} ${meta.name}</span><span>Ngày ${ev.day}</span></header>
+      <div class="mini-card__body">
+        <h3>${ev.title}</h3>
+        ${ev.text ? `<p>${ev.text}</p>` : ''}
+        ${ev.choice ? `<p class="mini-card__choice">Bạn chọn: <b>${ev.choice}</b></p>` : ''}
+        ${Array.isArray(ev.changes) ? `<div class="chips">${chipsFromChanges(ev.changes)}</div>` : ''}
+        ${(ev.notes || []).map(n => `<p class="note">${n}</p>`).join('')}
+        ${ev.lesson ? `<p class="lesson"><b>💡 Bài học:</b> ${ev.lesson}</p>` : ''}
+      </div>
+    </article>`;
+}
+
+function renderControls() {
+  const finished = state.phase === 'finished';
+  const canRoll = state.phase === 'playing' && !state.busy;
+  rollBtn.disabled = !(canRoll || finished);
+  rollBtn.textContent = finished ? '📊 Xem bảng điểm' : state.busy ? 'Đang chơi…'
+    : state.players.length > 1 ? `🎲 ${state.player.name} tung xúc xắc` : '🎲 Tung xúc xắc';
+  restartBtn.disabled = state.busy;
+}
+
+function setMessage(text) {
+  state.message = text;
+  $('#boardMessage').textContent = text;
+}
+
+function renderAll() {
+  renderBudget();
+  renderBoard();
+  renderDie(state.lastRoll);
+  $('#rollText').textContent = state.lastRoll ? `Vừa tung được ${state.lastRoll}.` : 'Chưa tung lần nào.';
+  renderLastEvent();
+  renderLog();
+  renderControls();
+  $('#boardMessage').textContent = state.message;
+}
+
+// Đưa quân cờ sang ô state.position, có hiệu ứng nhảy từ ô cũ sang ô mới (kỹ thuật FLIP)
+function placeToken(animate) {
+  const tokenEl = state.player.tokenEl;
+  const from = tokenEl.isConnected ? tokenEl.getBoundingClientRect() : null;
+  layoutTokens();
+  if (animate && from && !reduceMotion && tokenEl.animate) {
+    const to = tokenEl.getBoundingClientRect();
+    const dx = from.left - to.left;
+    const dy = from.top - to.top;
+    tokenEl.animate([
+      { transform: `translate(${dx}px, ${dy}px)` },
+      { transform: `translate(${dx / 2}px, ${dy / 2 - 12}px)`, offset: 0.5 },
+      { transform: 'translate(0, 0)' },
+    ], { duration: 280, easing: 'ease-in-out' });
+  }
+}
+
+
+/* =====================================================================
+   PHẦN 6. HỘP THOẠI (MODAL) VÀ CÁC LOẠI THẺ
+   openModal() trả về một Promise, được giải quyết khi hộp thoại đóng.
+   Nhờ vậy luồng chơi ở Phần 7 đọc như một dãy bước: await thẻ → đi tiếp.
+   ===================================================================== */
+
+const modalEl = $('#modal');
+const modalBody = $('#modalBody');
+let modalResolve = null;
+let modalCancelValue;        // giá trị trả về khi bấm Esc (undefined = không cho đóng bằng Esc)
+
+function openModal(content, { cancelValue, peek = false } = {}) {
+  modalCancelValue = cancelValue;
+  setPeek(false);
+  modalBody.replaceChildren(content);
+  const head = peek && $('.gcard__head', content);
+  if (head) head.append(peekBtn);          // nút 👁️ chỉ có trên các thẻ bài
+  if (!modalEl.open) modalEl.showModal();
+  modalEl.scrollTop = 0;
+  modalBody.focus({ preventScroll: true });
+  return new Promise(resolve => { modalResolve = resolve; });
+}
+
+function closeModal(value) {
+  setPeek(false);
+  if (modalEl.open) modalEl.close();
+  const resolve = modalResolve;
+  modalResolve = null;
+  if (resolve) resolve(value);
+}
+
+// Không cho Esc bỏ qua một quyết định giữa chừng
+modalEl.addEventListener('cancel', event => {
+  event.preventDefault();
+  if (modalCancelValue !== undefined) closeModal(modalCancelValue);
+});
+// Nếu trình duyệt tự đóng hộp thoại (vd. nhấn Esc hai lần), mở lại để không bị kẹt
+modalEl.addEventListener('close', () => {
+  if (!modalResolve) return;
+  if (modalCancelValue !== undefined) closeModal(modalCancelValue);
+  else modalEl.showModal();
+});
+
+/* ---------- Form chia tiền vào 3 quỹ ---------- */
+
+// Chia `total` theo tỉ lệ %, làm tròn đến ROUND_TO; phần dư dồn vào Tiết kiệm
+function splitByRatio(total, [pctNeed, pctWant]) {
+  const round = x => Math.round(x / ROUND_TO) * ROUND_TO;
+  const need = round(total * pctNeed / 100);
+  const want = round(total * pctWant / 100);
+  return { need, want, save: total - need - want };
+}
+
+/**
+ * Tạo form chia `total` đồng vào 3 quỹ (phương án A / B / C hoặc tự chia).
+ * Dùng cho cả màn hình bắt đầu (1.000.000₫) và thẻ Thu nhập.
+ * `onChange(isValid)` được gọi mỗi khi số tiền thay đổi; isValid = true khi đã chia đủ.
+ * Trả về { root, values, lock }.
+ */
+function createSplitter(total, onChange) {
+  const values = { need: 0, want: 0, save: 0 };
+  const inputs = {};
+  const planButtons = {};
+
+  const root = html(`
+    <div class="splitter">
+      <div class="plans" role="group" aria-label="Chọn phương án chia tiền"></div>
+      <div class="split-inputs"></div>
+      <div class="split-bar" aria-hidden="true">
+        <span class="seg seg--need"></span><span class="seg seg--want"></span><span class="seg seg--save"></span>
+      </div>
+      <p class="split-status" role="status"></p>
+    </div>`);
+
+  function markPlan(activeId) {
+    Object.entries(planButtons).forEach(([id, button]) => {
+      button.classList.toggle('is-active', id === activeId);
+      button.setAttribute('aria-pressed', String(id === activeId));
+    });
+  }
+
+  function refresh() {
+    const sum = values.need + values.want + values.save;
+    const diff = total - sum;
+    const base = Math.max(total, sum);
+    $$('.seg', root).forEach((seg, i) => { seg.style.width = `${values[FUND_IDS[i]] / base * 100}%`; });
+
+    const status = $('.split-status', root);
+    if (diff === 0)     { status.textContent = `Đã chia đủ ${money(total)}.`;                       status.className = 'split-status is-ok'; }
+    else if (diff > 0)  { status.textContent = `Còn ${money(diff)} chưa chia vào quỹ nào.`;         status.className = 'split-status is-warn'; }
+    else                { status.textContent = `Bạn đang chia nhiều hơn ${money(total)} là ${money(-diff)}.`; status.className = 'split-status is-bad'; }
+    onChange(diff === 0);
+  }
+
+  function choosePlan(plan) {
+    markPlan(plan.id);
+    if (plan.ratio) {
+      Object.assign(values, splitByRatio(total, plan.ratio));
+      FUND_IDS.forEach(id => { inputs[id].value = values[id]; });
+      refresh();
+    } else {
+      inputs.need.focus();      // phương án D: để người chơi tự nhập
+    }
+  }
+
+  // Nút phương án A / B / C và D (tự chia)
+  [...BUDGET_PLANS, { id: 'D', name: 'Tự chia', ratio: null }].forEach(plan => {
+    const preview = plan.ratio ? splitByRatio(total, plan.ratio) : null;
+    const sub = preview ? [preview.need, preview.want, preview.save].map(shortMoney).join(' / ') : 'Tự nhập số';
+    const button = html(`<button type="button" class="plan"><b>${plan.id}</b><span class="plan__name">${plan.name}</span><small>${sub}</small></button>`);
+    button.addEventListener('click', () => choosePlan(plan));
+    planButtons[plan.id] = button;
+    $('.plans', root).append(button);
+  });
+
+  // Ba ô nhập số tiền
+  FUND_IDS.forEach(id => {
+    const field = html(`
+      <label class="split-field split-field--${id}">
+        <span class="split-field__name">${FUNDS[id].icon} ${FUNDS[id].name}</span>
+        <span class="split-field__box"><input type="number" inputmode="numeric" min="0" step="${ROUND_TO}" value="0"><em>₫</em></span>
+      </label>`);
+    const input = $('input', field);
+    input.addEventListener('input', () => {
+      values[id] = Math.max(0, Math.floor(Number(input.value) || 0));
+      markPlan('D');
+      refresh();
+    });
+    inputs[id] = input;
+    $('.split-inputs', root).append(field);
+  });
+
+  function lock() {
+    Object.values(inputs).forEach(input => { input.disabled = true; });
+    Object.values(planButtons).forEach(button => { button.disabled = true; });
+  }
+
+  choosePlan(BUDGET_PLANS[0]);   // mặc định chọn phương án A
+  return { root, values, lock };
+}
+
+/* ---------- Màn hình bắt đầu: chọn mục tiêu + chia ngân sách ---------- */
+
+function showSetupModal() {
+  let chosenGoal = null;
+  let splitOk = false;
+  const player = state.player, multi = state.players.length > 1;
+
+  const root = html(`
+    <div class="setup">
+      <div class="setup__intro">
+        <h2>Chuẩn bị cho 30 ngày${multi ? ` · ${esc(player.name)}` : ''}</h2>
+        ${multi ? `<label class="name-field">Tên: <input type="text" maxlength="14" value="${esc(player.name)}" data-name></label>` : ''}
+        <p>Bạn có <b>${money(START_BUDGET)}</b> tiền mô phỏng. Chọn mục tiêu và chia tiền vào 3 quỹ trước khi bước sang ngày đầu tiên.</p>
+      </div>
+
+      <section>
+        <h3 class="step__title"><span class="step__num">1</span>Chọn mục tiêu tiết kiệm</h3>
+        <div class="goals"></div>
+        <button type="button" class="btn btn--small" data-random>Rút thẻ ngẫu nhiên</button>
+        <p class="goal-desc" role="status"></p>
+      </section>
+
+      <section>
+        <h3 class="step__title"><span class="step__num">2</span>Chia ${money(START_BUDGET)} vào 3 quỹ</h3>
+        <div class="splitter-slot"></div>
+      </section>
+
+      <p class="rule"><b>Không được vay tiền.</b> Nếu một quỹ không đủ, tiền sẽ được lấy từ quỹ khác và ghi chú vào nhật ký.</p>
+      <button type="button" class="btn btn--primary btn--block" data-start disabled>Chọn mục tiêu để bắt đầu</button>
+    </div>`);
+
+  const startBtn = $('[data-start]', root);
+  const descEl = $('.goal-desc', root);
+
+  function updateStartButton() {
+    startBtn.disabled = !(chosenGoal && splitOk);
+    startBtn.textContent = !chosenGoal ? 'Chọn mục tiêu để bắt đầu'
+      : !splitOk ? `Chia đủ ${money(START_BUDGET)} để bắt đầu`
+      : state.current < state.players.length - 1 ? 'Xong, tới người chơi tiếp theo' : 'Bắt đầu 30 ngày';
+  }
+
+  // Năm thẻ mục tiêu
+  const tiles = GOALS.map(goal => {
+    const tile = html(`
+      <button type="button" class="goal-tile" aria-pressed="false">
+        <span class="goal-tile__icon" aria-hidden="true">${goal.icon}</span>
+        <b>${goal.name}</b>
+        <small>Cần ${money(goal.target)}</small>
+      </button>`);
+    tile.addEventListener('click', () => chooseGoal(goal));
+    $('.goals', root).append(tile);
+    return tile;
+  });
+
+  function chooseGoal(goal) {
+    chosenGoal = goal;
+    tiles.forEach((tile, i) => tile.setAttribute('aria-pressed', String(GOALS[i] === goal)));
+    descEl.textContent = `${goal.desc} Cần có ${money(goal.target)} trong quỹ Tiết kiệm để nhận +${POINTS.goal} điểm.`;
+    updateStartButton();
+  }
+
+  $('[data-random]', root).addEventListener('click', () => chooseGoal(GOALS[randomInt(0, GOALS.length - 1)]));
+
+  const splitter = createSplitter(START_BUDGET, ok => { splitOk = ok; updateStartButton(); });
+  $('.splitter-slot', root).append(splitter.root);
+
+  startBtn.addEventListener('click', () => {
+    const nameInput = $('[data-name]', root);
+    if (nameInput && nameInput.value.trim()) player.name = nameInput.value.trim();
+    state.funds = { ...splitter.values };
+    state.goal = chosenGoal;
+    closeModal();
+  });
+
+  return openModal(root);
+}
+
+/* ---------- Khối "Kết quả + Bài học" dùng chung cho các loại thẻ ---------- */
+
+function showResult(box, { changes, notes = [], verdict = null, lesson }) {
+  const verdictHtml =
+    verdict === 'good' ? `<p class="verdict verdict--good">🛡️ Xử lý đúng! Bạn nhận +${POINTS.safety} điểm an toàn tài chính.</p>` :
+    verdict === 'bad'  ? `<p class="verdict verdict--bad">⚠️ Chưa an toàn. Thẻ này không có điểm an toàn tài chính.</p>` : '';
+
+  box.innerHTML = `
+    ${verdictHtml}
+    <div class="chips">${chipsFromChanges(changes)}</div>
+    ${notes.map(n => `<p class="note">${n}</p>`).join('')}
+    <p class="lesson"><b>💡 Bài học:</b> ${lesson}</p>
+    <p class="say-why">Hãy nói một câu giải thích vì sao bạn chọn cách này.</p>
+    <button type="button" class="btn btn--primary btn--block" data-continue>Tiếp tục</button>`;
+  box.hidden = false;
+
+  const continueBtn = $('[data-continue]', box);
+  continueBtn.addEventListener('click', () => closeModal());
+  continueBtn.focus({ preventScroll: true });
+  box.scrollIntoView({ block: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' });
+}
+
+function cardHeader(meta, rightText) {
+  const who = state.players.length > 1 ? `<i class="roster__dot" style="--pc:${state.player.color}"></i>${esc(state.player.name)} · ` : '';
+  return `<div class="gcard__head"><span>${meta.icon} ${meta.name}</span><span>${who}${rightText}</span></div>`;
+}
+
+/* ---------- Thẻ có lựa chọn A / B / C: Mua sắm, Biến cố, An toàn tài chính ---------- */
+
+function playChoiceCard(card, day) {
+  const meta = CELL_TYPES[card.type];
+  const root = html(`
+    <div class="gcard" style="--tcolor: var(${meta.color})">
+      ${cardHeader(meta, `Thẻ #${pad2(card.id)}`)}
+      <div class="gcard__body">
+        <h2 class="gcard__title">${card.title}</h2>
+        <p class="gcard__text">${card.text}</p>
+        ${card.type === 'safety' ? `<p class="gcard__hint">Xử lý đúng thẻ này để nhận +${POINTS.safety} điểm an toàn tài chính.</p>` : ''}
+        <div class="options"></div>
+        <div class="result" hidden></div>
+      </div>
+    </div>`);
+
+  const resultBox = $('.result', root);
+  const buttons = card.options.map(option => {
+    const button = html(`
+      <button type="button" class="option">
+        <span class="option__key">${option.key}</span>
+        <span class="option__label">${option.label}</span>
+        <span class="option__chips">${chipsFromEffects(option.effects)}${option.warn ? `<span class="chip chip--warn">${option.warn}</span>` : ''}</span>
+      </button>`);
+    button.addEventListener('click', () => pick(option, button));
+    $('.options', root).append(button);
+    return button;
+  });
+
+  function pick(option, chosenButton) {
+    // 1) Khóa các nút, đánh dấu lựa chọn
+    buttons.forEach(b => { b.disabled = true; b.classList.toggle('option--dim', b !== chosenButton); });
+    chosenButton.classList.add('option--chosen');
+
+    // 2) Cập nhật tiền
+    const { changes, notes } = applyEffects(option.effects);
+
+    // 3) Thẻ An toàn tài chính: ghi nhận xử lý đúng hay sai
+    let verdict = null;
+    if (card.type === 'safety') {
+      state.safetyTotal += 1;
+      if (option.correct) state.safetyCorrect += 1;
+      verdict = option.correct ? 'good' : 'bad';
+    }
+
+    // 4) Ghi nhật ký, cập nhật cột phải và bảng ngân sách
+    addLog({ title: `Thẻ #${pad2(card.id)} ${card.title}: chọn ${option.key}`, changes, notes });
+    state.lastEvent = { type: card.type, day, title: card.title, choice: `${option.key}. ${option.label}`, changes, notes, lesson: card.lesson };
+    setMessage(`Ngày ${day}: bạn chọn ${option.key} ở thẻ “${card.title}”.`);
+    renderAll();
+
+    // 5) In ra Bài học
+    showResult(resultBox, { changes, notes, verdict, lesson: card.lesson });
+  }
+
+  return openModal(root, { peek: true });
+}
+
+/* ---------- Thẻ Thu nhập: nhận tiền rồi tự chia vào 3 quỹ ---------- */
+
+function playIncomeCard(card, day) {
+  const meta = CELL_TYPES.income;
+  const root = html(`
+    <div class="gcard" style="--tcolor: var(${meta.color})">
+      ${cardHeader(meta, `Thẻ #${pad2(card.id)}`)}
+      <div class="gcard__body">
+        <h2 class="gcard__title">${card.title}</h2>
+        <p class="gcard__text">${card.text}</p>
+        <p class="income-amount">Bạn nhận <strong>${signed(card.income)}</strong></p>
+        ${card.hint ? `<p class="gcard__hint">${card.hint}</p>` : ''}
+        <p class="income-ask">Chia vào 3 quỹ và giải thích: vì sao chia như vậy?</p>
+        <div class="splitter-slot"></div>
+        <button type="button" class="btn btn--primary btn--block" data-confirm disabled>Xác nhận chia tiền</button>
+        <div class="result" hidden></div>
+      </div>
+    </div>`);
+
+  const confirmBtn = $('[data-confirm]', root);
+  const splitter = createSplitter(card.income, ok => { confirmBtn.disabled = !ok; });
+  $('.splitter-slot', root).append(splitter.root);
+
+  confirmBtn.addEventListener('click', () => {
+    splitter.lock();
+    confirmBtn.hidden = true;
+
+    const { changes, notes } = applyEffects(splitter.values);      // cộng tiền vào 3 quỹ
+    addLog({ title: `Thẻ #${pad2(card.id)} ${card.title}: chia ${signed(card.income)} vào 3 quỹ`, changes, notes });
+    state.lastEvent = { type: 'income', day, title: card.title, choice: `Chia ${money(card.income)} vào 3 quỹ`, changes, notes, lesson: card.lesson };
+    setMessage(`Ngày ${day}: bạn nhận ${money(card.income)} và chia vào 3 quỹ.`);
+    renderAll();
+
+    showResult($('.result', root), { changes, notes, lesson: card.lesson });
+  });
+
+  return openModal(root, { peek: true });
+}
+
+/* ---------- Ô Mục tiêu tiết kiệm: chuyển thêm tiền từ Sở thích sang Tiết kiệm ---------- */
+
+function playGoalCell(day) {
+  const meta = CELL_TYPES.goal;
+  const goal = state.goal;
+  const savedNow = state.funds.save;
+  const maxMove = Math.floor(Math.max(0, state.funds.want) / ROUND_TO) * ROUND_TO;
+
+  const root = html(`
+    <div class="gcard" style="--tcolor: var(${meta.color})">
+      ${cardHeader(meta, `Ngày ${day}`)}
+      <div class="gcard__body">
+        <h2 class="gcard__title">Chuyển thêm vào quỹ Tiết kiệm?</h2>
+        <p class="gcard__text">Bạn có thể chuyển thêm tiền từ quỹ Sở thích sang quỹ Tiết kiệm. Việc này không bắt buộc.</p>
+
+        <div class="goal-box">
+          <div class="goal__top"><span class="goal__title">${goal.icon} ${goal.name}</span><span class="goal__target">cần ${money(goal.target)}</span></div>
+          <div class="meter meter--goal"><span class="meter__fill" data-fill></span></div>
+          <p class="transfer__after" data-after></p>
+        </div>
+
+        ${maxMove > 0 ? `
+          <div class="transfer">
+            <label for="moveRange">Chuyển từ Sở thích sang Tiết kiệm: <strong data-amount>0₫</strong></label>
+            <input id="moveRange" type="range" min="0" max="${maxMove}" step="${ROUND_TO}" value="0">
+            <div class="quick">
+              <button type="button" class="btn btn--small" data-add="50000">+50.000₫</button>
+              <button type="button" class="btn btn--small" data-add="100000">+100.000₫</button>
+              <button type="button" class="btn btn--small" data-all>Chuyển tối đa</button>
+            </div>
+          </div>
+          <div class="actions">
+            <button type="button" class="btn" data-skip>Giữ nguyên</button>
+            <button type="button" class="btn btn--primary" data-move disabled>Chuyển tiền</button>
+          </div>` : `
+          <p class="note">Quỹ Sở thích đang trống nên bạn chưa thể chuyển thêm.</p>
+          <button type="button" class="btn btn--primary btn--block" data-skip>Tiếp tục</button>`}
+      </div>
+    </div>`);
+
+  // Xem trước: quỹ Tiết kiệm sau khi chuyển
+  function preview(amount) {
+    const after = savedNow + amount;
+    $('[data-fill]', root).style.width = `${clamp(after / goal.target * 100, 0, 100)}%`;
+    $('[data-after]', root).textContent = `Tiết kiệm: ${money(savedNow)} → ${money(after)}. ` +
+      (after >= goal.target ? 'Đã đủ tiền cho mục tiêu.' : `Còn thiếu ${money(goal.target - after)}.`);
+  }
+  preview(0);
+
+  let amount = 0;
+  function setAmount(value) {
+    amount = clamp(value, 0, maxMove);
+    $('#moveRange', root).value = amount;
+    $('[data-amount]', root).textContent = money(amount);
+    $('[data-move]', root).disabled = amount === 0;
+    preview(amount);
+  }
+
+  if (maxMove > 0) {
+    $('#moveRange', root).addEventListener('input', event => setAmount(Number(event.target.value)));
+    $$('[data-add]', root).forEach(btn => btn.addEventListener('click', () => setAmount(amount + Number(btn.dataset.add))));
+    $('[data-all]', root).addEventListener('click', () => setAmount(maxMove));
+    $('[data-move]', root).addEventListener('click', () => finish(amount));
+  }
+  $('[data-skip]', root).addEventListener('click', () => finish(0));
+
+  function finish(moved) {
+    let changes = [];
+    let notes = [];
+    if (moved > 0) ({ changes, notes } = applyEffects({ want: -moved, save: moved }));
+
+    addLog({ title: moved > 0 ? `Mục tiêu tiết kiệm: chuyển ${money(moved)} sang Tiết kiệm` : 'Mục tiêu tiết kiệm: giữ nguyên', changes, notes });
+    state.lastEvent = {
+      type: 'goal', day, title: `Mục tiêu: ${goal.name}`,
+      choice: moved > 0 ? `Chuyển ${money(moved)} từ Sở thích sang Tiết kiệm` : 'Không chuyển thêm',
+      changes, notes, lesson: goal.lesson,
+    };
+    setMessage(moved > 0 ? `Ngày ${day}: bạn chuyển ${money(moved)} sang quỹ Tiết kiệm.` : `Ngày ${day}: bạn giữ nguyên các quỹ.`);
+    renderAll();
+    closeModal();
+  }
+
+  return openModal(root, { peek: true });
+}
+
+/* ---------- Hỏi lại khi bấm "Chơi lại" giữa ván ---------- */
+
+function confirmRestart() {
+  const root = html(`
+    <div class="confirm">
+      <h2>Chơi lại từ đầu?</h2>
+      <p>Ván hiện tại sẽ bị xóa và bạn sẽ chia lại ngân sách từ đầu.</p>
+      <div class="actions">
+        <button type="button" class="btn" data-no>Tiếp tục ván này</button>
+        <button type="button" class="btn btn--primary" data-yes>Chơi lại</button>
+      </div>
+    </div>`);
+  $('[data-no]', root).addEventListener('click', () => closeModal(false));
+  $('[data-yes]', root).addEventListener('click', () => closeModal(true));
+  return openModal(root, { cancelValue: false });
+}
+
+
+/* =====================================================================
+   PHẦN 7. LUỒNG CHƠI: tung xúc xắc → đi → xử lý ô → (hết 30 ngày) tổng kết
+   ===================================================================== */
+
+async function startNewGame() {
+  clearPlayerDom();                                   // dọn DOM sinh động của ván cũ trước khi tạo ván mới
+  state = createState(1);                             // state tạm để vẽ bàn cờ trống
+  Object.assign(shownFunds, { need: 0, want: 0, save: 0 });
+  shownPlayer = null;
+  setMessage('Chọn số người chơi để bắt đầu.');
+  renderAll();
+
+  const count = await showPlayerCountModal();
+  state = createState(count);
+  state.players.forEach(buildToken);
+  for (let i = 0; i < count; i++) {                   // mỗi người chọn mục tiêu + chia tiền lần lượt
+    state.current = i;
+    setMessage(count > 1 ? `${state.player.name}: chọn mục tiêu và chia ngân sách.` : 'Chọn mục tiêu và chia ngân sách để bắt đầu.');
+    renderAll();
+    await showSetupModal();
+  }
+
+  state.players.forEach((p, i) => {
+    state.current = i;
+    const goal = state.goal;
+    addLog({
+      title: `Bắt đầu: chia ${money(START_BUDGET)}, mục tiêu “${goal.name}”`,
+      changes: FUND_IDS.map(id => ({ fund: id, delta: state.funds[id] })).filter(c => c.delta !== 0),
+    });
+    state.lastEvent = { type: 'start', day: 1, title: `Mục tiêu: ${goal.name}`, text: `${goal.desc} Cần ${money(goal.target)} trong quỹ Tiết kiệm.`, lesson: goal.lesson };
+  });
+  state.current = 0;
+  state.phase = 'playing';
+  shownPlayer = null;
+  setMessage(count > 1 ? `Lượt của ${state.player.name}: bấm “Tung xúc xắc” hoặc nhấn Space.` : 'Bấm “Tung xúc xắc” để bước sang ngày tiếp theo.');
+  renderAll();
+}
+
+// Chuyển lượt: bỏ qua người đã về đích (1 người chơi thì giữ nguyên)
+function nextTurn() {
+  const n = state.players.length;
+  if (n === 1) return;
+  do { state.current = (state.current + 1) % n; } while (state.player.done);
+  setMessage(`Tới lượt ${state.player.name}: bấm “Tung xúc xắc” hoặc nhấn Space.`);
+  renderAll();
+}
+
+// Hiệu ứng xúc xắc: đổi mặt liên tục rồi dừng ở số cuối (ngẫu nhiên 1–6)
+async function rollDice() {
+  dieEl.classList.add('is-rolling');
+  const frames = reduceMotion ? 0 : 9;
+  for (let i = 0; i < frames; i++) {
+    renderDie(randomInt(1, 6));
+    await sleep(75);
+  }
+  const value = randomInt(1, 6);
+  dieEl.classList.remove('is-rolling');
+  state.lastRoll = value;
+  return value;
+}
+
+// Đi từng ô một để người chơi nhìn thấy quân cờ di chuyển
+async function moveToken(steps) {
+  for (let i = 0; i < steps; i++) {
+    state.position += 1;
+    placeToken(true);
+    renderBoard();
+    await sleep(300);
+  }
+}
+
+// Xử lý ô quân cờ vừa đứng vào
+async function resolveCell() {
+  const cell = BOARD[state.position];
+  const day = state.position + 1;
+
+  if (cell.type === 'cost') {
+    // Chi phí cần thiết: tự động trừ từ quỹ Nhu cầu
+    const { changes, notes } = applyEffects({ need: -cell.amount });
+    addLog({ title: 'Chi phí cần thiết', changes, notes });
+    state.lastEvent = { type: 'cost', day, title: 'Chi phí cần thiết', text: `Trả ${money(cell.amount)} từ quỹ Nhu cầu.`, changes, notes };
+    setMessage(`Ngày ${day}: trả ${money(cell.amount)} chi phí cần thiết từ quỹ Nhu cầu.`);
+    renderAll();
+  } else if (cell.type === 'goal') {
+    setMessage(`Ngày ${day}: ô Mục tiêu tiết kiệm.`);
+    renderAll();
+    await playGoalCell(day);
+  } else if (cell.type === 'income') {
+    setMessage(`Ngày ${day}: ô Thu nhập. Rút thẻ!`);
+    renderAll();
+    await playIncomeCard(drawCard('income'), day);
+  } else {
+    // shopping, incident, safety: rút một thẻ cùng loại
+    setMessage(`Ngày ${day}: ${CELL_TYPES[cell.type].name}. Rút thẻ!`);
+    renderAll();
+    await playChoiceCard(drawCard(cell.type), day);
+  }
+}
+
+function setBusy(flag) {
+  state.busy = flag;
+  renderControls();
+}
+
+async function handleRoll() {
+  if (state.phase === 'finished') { showScoreAndMaybeRestart(); return; }
+  if (state.phase !== 'playing' || state.busy) return;
+
+  setBusy(true);
+  const roll = await rollDice();
+  const steps = Math.min(roll, LAST_INDEX - state.position);      // không đi quá Ngày 30
+  setMessage(steps < roll
+    ? `Bạn tung được ${roll}, nhưng chỉ còn ${steps} ô nữa là tới Ngày ${TOTAL_DAYS}.`
+    : `Bạn tung được ${roll}: đi ${steps} ô.`);
+  renderAll();
+
+  await moveToken(steps);
+  await resolveCell();
+
+  if (state.position === LAST_INDEX) state.player.done = true;
+  if (state.players.every(p => p.done)) await finishGame();
+  else nextTurn();
+  setBusy(false);
+}
+
+
+/* =====================================================================
+   PHẦN 8. TỔNG KẾT VÀ TÍNH ĐIỂM (khi đến ô Ngày 30)
+   ===================================================================== */
+
+function calculateScore(p = state) {
+  const f = p.funds;
+  const total = f.need + f.want + f.save;
+  const goal = p.goal;
+  const goalOk = f.save >= goal.target;
+
+  const rows = [
+    { icon: '🎯', label: `Đạt mục tiêu “${goal.name}”`,
+      detail: `Tiết kiệm ${money(f.save)} / cần ${money(goal.target)}`,
+      points: goalOk ? POINTS.goal : 0 },
+    { icon: '🍜', label: 'Quỹ Nhu cầu không bị âm',
+      detail: `Quỹ Nhu cầu còn ${money(f.need)}`,
+      points: f.need >= 0 ? POINTS.need : 0 },
+    { icon: '💼', label: 'Tổng ngân sách còn lại không âm',
+      detail: `Tổng 3 quỹ còn ${money(total)}`,
+      points: total >= 0 ? POINTS.budget : 0 },
+    { icon: '🛡️', label: 'Xử lý đúng thẻ An toàn tài chính',
+      detail: p.safetyTotal === 0
+        ? 'Bạn chưa gặp thẻ An toàn tài chính nào'
+        : `${p.safetyCorrect}/${p.safetyTotal} thẻ đúng, mỗi thẻ +${POINTS.safety} điểm`,
+      points: p.safetyCorrect * POINTS.safety },
+  ];
+  const totalPoints = rows.reduce((sum, row) => sum + row.points, 0);
+  return { rows, totalPoints, total };
+}
+
+function getRank(points) {
+  if (points >= 12) return { icon: '🏆', title: 'Siêu sao quản lý tiền' };
+  if (points >= 10) return { icon: '🌟', title: 'Quản lý tiền xuất sắc' };
+  if (points >= 7)  return { icon: '👍', title: 'Quản lý tiền khá tốt' };
+  if (points >= 3)  return { icon: '🌱', title: 'Đang tiến bộ' };
+  return { icon: '💪', title: 'Cần luyện thêm, chơi lại nhé' };
+}
+
+function showScoreModal() {
+  if (state.players.length > 1) return showRankingModal();
+  const score = calculateScore();
+  const rank = getRank(score.totalPoints);
+  const f = state.funds;
+
+  const root = html(`
+    <div class="score">
+      <div class="score__head">
+        <h2>Bạn đã đi hết ${TOTAL_DAYS} ngày!</h2>
+        <p class="score__rank">${rank.icon} ${rank.title}</p>
+        <p class="score__total"><strong>${score.totalPoints}</strong> điểm</p>
+      </div>
+
+      <ul class="score-rows">
+        ${score.rows.map(row => `
+          <li class="score-row ${row.points > 0 ? 'is-earned' : 'is-missed'}">
+            <span class="score-row__icon" aria-hidden="true">${row.icon}</span>
+            <div><b>${row.label}</b><small>${row.detail}</small></div>
+            <span class="score-row__pts">${row.points > 0 ? '+' : ''}${row.points}</span>
+          </li>`).join('')}
+      </ul>
+
+      <div class="chips">
+        ${FUND_IDS.map(id => `<span class="chip chip--zero"><i class="dot dot--${id}"></i>${FUNDS[id].name} còn ${money(f[id])}</span>`).join('')}
+      </div>
+
+      <p class="callout">Người thắng không phải là người giữ nhiều tiền nhất, mà là người có nhiều điểm nhất.</p>
+
+      <div class="actions">
+        <button type="button" class="btn" data-review>Xem lại bàn cờ</button>
+        <button type="button" class="btn btn--primary" data-again>Chơi lại</button>
+      </div>
+    </div>`);
+
+  $('[data-review]', root).addEventListener('click', () => closeModal('review'));
+  $('[data-again]', root).addEventListener('click', () => closeModal('restart'));
+  return openModal(root, { cancelValue: 'review' });
+}
+
+async function showScoreAndMaybeRestart() {
+  const choice = await showScoreModal();
+  if (choice === 'restart') startNewGame();
+}
+
+async function finishGame() {
+  state.phase = 'finished';
+  setMessage(`Bạn đã đến Ngày ${TOTAL_DAYS}. Xem bảng điểm nào!`);
+  renderAll();
+  await showScoreAndMaybeRestart();
+}
+
+
+/* =====================================================================
+   PHẦN 8b. NHIỀU NGƯỜI CHƠI · PHÍM TẮT · NHÌN TRỘM · DỌN DẸP DOM
+   ===================================================================== */
+
+const esc = text => String(text).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+function buildToken(p) {
+  p.tokenEl = html(`
+    <div class="token" aria-hidden="true" data-player="${esc(p.name)}">
+      <svg class="token__svg" viewBox="0 0 40 56">
+        <ellipse cx="20" cy="52" rx="14" ry="4" fill="rgba(27,23,64,.3)"/>
+        <path d="M20 14C27 24 33 36 33 46C33 49 31 50 28 50H12C9 50 7 49 7 46C7 36 13 24 20 14Z" fill="#fff9ea" stroke="#1b1740" stroke-width="3" stroke-linejoin="round"/>
+        <circle cx="20" cy="13" r="9" fill="${p.color}" stroke="#1b1740" stroke-width="3"/>
+      </svg>
+    </div>`);
+  cellEls[p.position].append(p.tokenEl);
+}
+
+// Xếp các quân cờ vào đúng ô; quân trùng ô được chia thành lưới 4 cột × 2 hàng
+function layoutTokens() {
+  const multi = state.players.length > 1, used = {};
+  state.players.forEach(p => {
+    if (!p.tokenEl) return;
+    const cell = cellEls[p.position];
+    if (p.tokenEl.parentElement !== cell) cell.append(p.tokenEl);
+    const slot = used[p.position] = (used[p.position] ?? -1) + 1;
+    p.tokenEl.style.setProperty('--col', slot % 4);
+    p.tokenEl.style.setProperty('--row', Math.floor(slot / 4));
+    p.tokenEl.classList.toggle('token--multi', multi);
+    p.tokenEl.classList.toggle('token--current', multi && p === state.player);
+  });
+}
+
+// Bảng tóm tắt tiền của mọi người (chỉ hiện khi có từ 2 người chơi)
+function renderRoster() {
+  const box = $('#roster');
+  box.hidden = state.players.length < 2;
+  box.innerHTML = state.players.length < 2 ? '' : state.players.map(p => {
+    const total = p.funds.need + p.funds.want + p.funds.save;
+    return `<li class="roster__item${p === state.player ? ' is-current' : ''}${p.done ? ' is-done' : ''}" style="--pc:${p.color}">
+      <i class="roster__dot"></i><span class="roster__name">${esc(p.name)}</span>
+      <span class="roster__day">${p.done ? 'Về đích' : `Ngày ${p.position + 1}`}</span>
+      <b class="${total < 0 ? 'is-negative' : ''}">${money(total)}</b></li>`;
+  }).join('');
+}
+
+// Chữ "+50.000₫" / "−20.000₫" bay lên rồi mờ dần; tự gỡ khỏi DOM khi xong
+function floatMoney(node, delta) {
+  if (reduceMotion || !delta || !node.animate) return;
+  const el = document.createElement('span');
+  el.className = `float-money float-money--${delta > 0 ? 'up' : 'down'}`;
+  el.textContent = signed(delta);
+  node.append(el);
+  const anim = el.animate(
+    [{ transform: 'translateY(0)', opacity: 1 }, { transform: 'translateY(-38px)', opacity: 0 }],
+    { duration: 1200, easing: 'ease-out' });
+  anim.onfinish = anim.oncancel = () => el.remove();
+}
+
+// Dọn sạch DOM do trò chơi tự sinh ra (quân cờ, chữ nổi, bảng người chơi…)
+function clearPlayerDom() {
+  state.players.forEach(p => {
+    if (!p.tokenEl) return;
+    p.tokenEl.getAnimations?.().forEach(a => a.cancel());
+    p.tokenEl.remove();
+    p.tokenEl = null;
+  });
+  $$('.token', boardEl).forEach(el => el.remove());
+  $$('.float-money').forEach(el => el.remove());
+  $('#roster').replaceChildren();
+  setPeek(false);
+}
+
+function showPlayerCountModal() {
+  const root = html(`
+    <div class="setup">
+      <div class="setup__intro">
+        <h2>Có bao nhiêu người chơi?</h2>
+        <p>Chơi luân phiên trên cùng một máy. Mỗi người có ngân sách, mục tiêu và quân cờ riêng (tối đa ${MAX_PLAYERS} người). Nhấn phím 1–${MAX_PLAYERS} để chọn nhanh.</p>
+      </div>
+      <div class="goals count-picks"></div>
+    </div>`);
+  for (let n = 1; n <= MAX_PLAYERS; n++) {
+    const tile = html(`
+      <button type="button" class="goal-tile">
+        <span class="goal-tile__icon" aria-hidden="true">${PLAYER_COLORS.slice(0, n).map(c => `<i class="roster__dot" style="--pc:${c}"></i>`).join('')}</span>
+        <b>${n} người chơi</b>
+      </button>`);
+    tile.addEventListener('click', () => closeModal(n));
+    $('.goals', root).append(tile);
+  }
+  return openModal(root);
+}
+
+function showRankingModal() {
+  const rows = state.players.map(p => ({ p, ...calculateScore(p) }))
+    .sort((a, b) => b.totalPoints - a.totalPoints || b.total - a.total);
+  const medals = ['🥇', '🥈', '🥉'];
+  const root = html(`
+    <div class="score">
+      <div class="score__head">
+        <h2>Cả nhóm đã đi hết ${TOTAL_DAYS} ngày!</h2>
+        <p class="score__rank">🏆 ${esc(rows[0].p.name)} dẫn đầu với ${rows[0].totalPoints} điểm</p>
+      </div>
+      <ul class="score-rows">
+        ${rows.map((r, i) => `
+          <li class="score-row ${i === 0 ? 'is-earned' : ''}" style="--pc:${r.p.color}">
+            <span class="score-row__icon" aria-hidden="true">${medals[i] || i + 1}</span>
+            <div><b><i class="roster__dot"></i>${esc(r.p.name)}</b><small>${r.rows.map(x => x.icon + (x.points > 0 ? '✓' : '✗')).join(' ')} · còn ${money(r.total)}</small></div>
+            <span class="score-row__pts">${r.totalPoints}</span>
+          </li>`).join('')}
+      </ul>
+      <p class="callout">Người thắng không phải là người giữ nhiều tiền nhất, mà là người có nhiều điểm nhất.</p>
+      <div class="actions">
+        <button type="button" class="btn" data-review>Xem lại bàn cờ</button>
+        <button type="button" class="btn btn--primary" data-again>Chơi lại</button>
+      </div>
+    </div>`);
+  $('[data-review]', root).addEventListener('click', () => closeModal('review'));
+  $('[data-again]', root).addEventListener('click', () => closeModal('restart'));
+  return openModal(root, { cancelValue: 'review' });
+}
+
+/* ---------- Nhìn trộm bàn cờ: giữ nút 👁️ (hoặc phím P) → hộp thoại mờ còn 10% ---------- */
+const peekBtn = html(`<button type="button" class="peek-btn" title="Giữ để nhìn bàn cờ (phím P)" aria-label="Nhìn trộm bàn cờ: giữ chuột hoặc giữ phím P">👁️</button>`);
+const setPeek = on => modalEl.classList.toggle('is-peeking', Boolean(on) && modalEl.open);
+peekBtn.addEventListener('pointerdown', event => { event.preventDefault(); peekBtn.setPointerCapture?.(event.pointerId); setPeek(true); });
+['pointerup', 'pointercancel', 'lostpointercapture'].forEach(type => peekBtn.addEventListener(type, () => setPeek(false)));
+peekBtn.addEventListener('contextmenu', event => event.preventDefault());
+window.addEventListener('blur', () => setPeek(false));
+
+/* ---------- Phím tắt (đăng ký một lần duy nhất, không nằm trong startNewGame) ---------- */
+document.addEventListener('keydown', event => {
+  if (event.ctrlKey || event.metaKey || event.altKey) return;
+  const el = event.target, tag = el.tagName;
+  if ((tag === 'INPUT' && el.type !== 'range') || tag === 'TEXTAREA' || tag === 'SELECT' || tag === 'SUMMARY') return;
+  const key = event.key.toUpperCase();
+
+  if (key === 'P' && modalEl.open && peekBtn.isConnected) { setPeek(true); return; }
+
+  if (modalEl.open) {                                        // A/B/C chọn thẻ · 1–8 chọn số người chơi
+    let target = null;
+    if (!event.repeat && ['A', 'B', 'C'].includes(key)) {
+      target = $$('.option:not(:disabled)', modalBody).find(b => $('.option__key', b).textContent.trim() === key);
+    } else if (!event.repeat && /^[1-8]$/.test(key)) {
+      target = $$('.count-picks .goal-tile', modalBody)[Number(key) - 1];
+    }
+    if (target) { event.preventDefault(); target.click(); }
+    return;
+  }
+  if (event.code === 'Space') {                              // Space tung xúc xắc
+    event.preventDefault();
+    if (!event.repeat && !rollBtn.disabled) rollBtn.click();
+  }
+});
+document.addEventListener('keyup', event => {
+  if (event.key.toUpperCase() === 'P') setPeek(false);
+  if (event.code === 'Space' && !modalEl.open) event.preventDefault();   // tránh nút đang focus bị "click" thêm lần nữa
+});
+
+
+/* =====================================================================
+   PHẦN 9. KHỞI ĐỘNG
+   ===================================================================== */
+
+rollBtn.addEventListener('click', handleRoll);
+restartBtn.addEventListener('click', async () => {
+  if (state.busy) return;
+  if (state.phase === 'playing' && state.players.some(p => p.position > 0)) {
+    const sure = await confirmRestart();
+    if (!sure) return;
+  }
+  startNewGame();
+});
+
+buildBoard();
+buildLegend();
+buildFundBlocks();
+startNewGame();
 </script>
 </body>
 </html>
