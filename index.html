@@ -1,470 +1,145 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ Thống Giám Sát ESP32</title>
-    <!-- Thư viện Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <style>
-        /* === CẤU HÌNH PHÔNG CHỮ VÀ GIAO DIỆN CHÍNH === */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        }
-
-        body {
-            background-color: #f1f5f9;
-            color: #0f172a;
-            padding: 20px;
-        }
-
-        /* Nút Mô Phỏng Góc Trên Trái */
-        .btn-top-left {
-            position: fixed;
-            top: 15px;
-            left: 15px;
-            background-color: #f59e0b;
-            color: #ffffff;
-            border: none;
-            padding: 10px 18px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-            transition: all 0.2s ease;
-            z-index: 99;
-        }
-
-        .btn-top-left:hover {
-            background-color: #d97706;
-            transform: translateY(-2px);
-        }
-
-        /* Container Khung Dashboard */
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding-top: 45px;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 25px;
-        }
-
-        header h1 {
-            font-size: 26px;
-            color: #0284c7;
-            margin-bottom: 5px;
-        }
-
-        header p {
-            color: #64748b;
-            font-size: 14px;
-        }
-
-        /* Bố cục Grid 2 cột */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 20px;
-        }
-
-        .card {
-            background: #ffffff;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e2e8f0;
-        }
-
-        .card h2 {
-            font-size: 16px;
-            color: #334155;
-            margin-bottom: 15px;
-            border-bottom: 2px solid #f1f5f9;
-            padding-bottom: 8px;
-        }
-
-        .chart-card {
-            grid-column: 1 / -1;
-        }
-
-        /* Hiển thị dữ liệu số */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        .stat-item {
-            background: #f8fafc;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
-        }
-
-        .stat-item .label {
-            font-size: 12px;
-            color: #64748b;
-            display: block;
-            margin-bottom: 4px;
-        }
-
-        .stat-item .value {
-            font-size: 18px;
-            font-weight: 700;
-            color: #0284c7;
-        }
-
-        .stat-item .value.status-on {
-            color: #16a34a;
-        }
-
-        .stat-item .value.status-off {
-            color: #dc2626;
-        }
-
-        /* Khung tổng hợp 12h */
-        .summary-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .summary-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #f8fafc;
-            padding: 12px 16px;
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
-        }
-
-        .summary-item .value {
-            font-size: 18px;
-            font-weight: 700;
-            color: #16a34a;
-        }
-
-        .note {
-            font-size: 12px;
-            color: #94a3b8;
-            margin-top: 10px;
-            font-style: italic;
-        }
-
-        /* Biểu đồ */
-        .chart-container {
-            position: relative;
-            height: 320px;
-            width: 100%;
-        }
-
-        /* MODAL MÔ PHỎNG */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(15, 23, 42, 0.6);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-content {
-            background: #ffffff;
-            padding: 25px;
-            border-radius: 12px;
-            width: 100%;
-            max-width: 380px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            position: relative;
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            font-size: 20px;
-            color: #64748b;
-            cursor: pointer;
-            border: none;
-            background: none;
-        }
-
-        .form-group {
-            margin-bottom: 14px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: #334155;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 9px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            font-size: 14px;
-            outline: none;
-        }
-
-        .form-group input:focus {
-            border-color: #0284c7;
-        }
-
-        .btn-submit {
-            width: 100%;
-            background-color: #0284c7;
-            color: #ffffff;
-            border: none;
-            padding: 10px;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        .btn-submit:hover {
-            background-color: #0369a1;
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hộp MONEY MISSION 3D</title>
+<style>
+:root{--bg:#E9EEF5;--ink:#17243A;--mut:#5A6B80;--btn:#fff;--btnb:#C9D3E0;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0F1621;--ink:#E8EEF5;--mut:#93A3B8;--btn:#1B2636;--btnb:#2E3E54}}
+:root[data-theme="dark"]{--bg:#0F1621;--ink:#E8EEF5;--mut:#93A3B8;--btn:#1B2636;--btnb:#2E3E54}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Trebuchet MS","Segoe UI",system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;min-height:100vh;padding:20px 16px 28px}
+h1{font-size:20px;margin:4px 0 2px;text-align:center}
+p.sub{margin:0 0 6px;color:var(--mut);font-size:14px;text-align:center}
+.stage{width:100%;display:flex;justify-content:center;align-items:center;perspective:1400px;touch-action:none;cursor:grab;user-select:none;position:relative}
+.stage:active{cursor:grabbing}
+.scene{width:360px;height:250px;position:relative;transform:scale(var(--s,1));transform-style:preserve-3d}
+.box{position:absolute;inset:0;transform-style:preserve-3d}
+.shadow{position:absolute;left:50%;bottom:6%;width:60%;height:26px;margin-left:-30%;background:radial-gradient(ellipse,rgba(0,0,0,.35),transparent 70%);filter:blur(4px);pointer-events:none}
+.f{position:absolute;overflow:hidden;backface-visibility:hidden;color:#fff}
+.f::after{content:"";position:absolute;inset:0;background:var(--sh,none);pointer-events:none}
+.front,.back,.top,.bottom{width:360px}
+.front,.back{height:250px;left:0;top:0}
+.front{transform:translateZ(40px);background:linear-gradient(140deg,#17243A 0%,#1F4E7A 100%)}
+.back{transform:rotateY(180deg) translateZ(40px);background:#FBFAF5;color:#17243A}
+.right,.left{width:80px;height:250px;left:140px;top:0}
+.right{transform:rotateY(90deg) translateZ(180px);background:#1B3556;--sh:linear-gradient(90deg,rgba(0,0,0,.05),rgba(0,0,0,.2))}
+.left{transform:rotateY(-90deg) translateZ(180px);background:#1B3556;--sh:rgba(0,0,0,.28)}
+.top,.bottom{height:80px;left:0;top:85px}
+.top{transform:rotateX(90deg) translateZ(125px);background:#17243A;--sh:linear-gradient(rgba(255,255,255,.14),rgba(255,255,255,0))}
+.bottom{transform:rotateX(-90deg) translateZ(125px);background:#0E1828;--sh:rgba(0,0,0,.3)}
+/* front art */
+.brand{position:absolute;left:24px;top:26px;font-weight:900;font-size:35px;line-height:1.02}
+.brand b{display:block;color:#FFC93C}
+.pill{position:absolute;left:24px;top:110px;background:#27AE60;border-radius:20px;padding:6px 12px;font-weight:700;font-size:12px}
+.tag{position:absolute;left:24px;top:150px;font-size:12px;line-height:1.4;color:#C9D8EA;width:170px}
+.chips{position:absolute;left:24px;bottom:18px;display:flex;gap:6px}
+.chips i{width:18px;height:18px;border-radius:5px;display:block}
+.fan{position:absolute;right:8px;top:74px;width:150px;height:150px}
+.k{position:absolute;width:64px;height:92px;border-radius:8px;border:3px solid #fff;display:flex;align-items:center;justify-content:center;font-style:normal;font-weight:900;font-size:30px;box-shadow:0 4px 10px rgba(0,0,0,.35)}
+.k.a{background:#F39C12;left:0;top:34px;transform:rotate(-14deg)}
+.k.b{background:#E74C3C;left:44px;top:14px;transform:rotate(-1deg)}
+.k.c{background:#16A085;left:86px;top:34px;transform:rotate(13deg)}
+.coin{position:absolute;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FFE58A,#F2A900);border:3px solid #C98A00;color:#8A5A00;font-weight:900;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 6px rgba(0,0,0,.35)}
+.c1{width:46px;height:46px;right:26px;bottom:20px;font-size:22px}
+.c2{width:34px;height:34px;right:84px;bottom:14px;font-size:16px}
+.c3{width:28px;height:28px;right:128px;bottom:26px;font-size:13px}
+/* back */
+.back .in{position:absolute;inset:0;padding:20px 24px}
+.back h3{margin:0 0 6px;font-size:16px}
+.back p{margin:0 0 8px;font-size:11px;line-height:1.45;color:#3A4A5E}
+.opt{display:flex;gap:6px;margin:8px 0}
+.opt span{flex:1;border-radius:8px;padding:6px 7px;font-size:9.5px;line-height:1.35;color:#17243A}
+.opt b{display:block;font-size:11px}
+.back ul{margin:6px 0 0;padding-left:16px;font-size:11px;line-height:1.55}
+.qr{position:absolute;right:24px;bottom:20px;width:62px;height:62px;border:2px dashed #3498DB;border-radius:6px;font-size:9px;color:#3498DB;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.2}
+.back .info{position:absolute;left:24px;bottom:20px;font-size:9.5px;font-weight:700;color:#1F4E7A}
+/* sides */
+.spine{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.spine span{writing-mode:vertical-rl;font-weight:900;font-size:22px;letter-spacing:1px;white-space:nowrap}
+.spine em{color:#FFC93C;font-style:normal}
+.tl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:20px;font-weight:900;font-size:30px}
+.tl em{color:#FFC93C;font-style:normal}
+.bt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:#93A3B8;text-align:center;line-height:1.5}
+.ctrl{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:10px}
+button{font:inherit;font-size:14px;color:var(--ink);background:var(--btn);border:1px solid var(--btnb);border-radius:10px;padding:9px 14px;cursor:pointer;min-height:40px}
+button:hover{border-color:#3498DB}
+button:focus-visible{outline:3px solid #3498DB;outline-offset:2px}
+button[aria-pressed="true"]{background:#1F4E7A;border-color:#1F4E7A;color:#fff}
+.hint{color:var(--mut);font-size:13px;margin-top:12px;text-align:center;max-width:460px;line-height:1.5}
+</style>
 </head>
 <body>
+<h1>Hộp trò chơi MONEY MISSION</h1>
+<p class="sub">Kéo để xoay hộp theo mọi hướng</p>
 
-    <!-- Nút Mô Phỏng -->
-    <button class="btn-top-left" onclick="openModal()">⚡ Mô phỏng</button>
-
-    <div class="container">
-        <header>
-            <h1>Hệ Thống Giám Sát Nhiệt Độ & Điện Năng Ổ Cắm</h1>
-            <p>Dữ liệu nhận từ thiết bị ESP32 qua WiFi</p>
-        </header>
-
-        <main class="dashboard-grid">
-            <!-- Thẻ 1: Thông số thời gian thực từ ESP32 -->
-            <div class="card">
-                <h2>Thông Số Hiện Tại (ESP32)</h2>
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <span class="label">Nhiệt độ cảm biến</span>
-                        <span class="value" id="val-temp">35.0000 °C</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="label">Công suất hao tổn</span>
-                        <span class="value" id="val-power">0.2500 W</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="label">Dòng điện ước tính</span>
-                        <span class="value" id="val-amp">1.5000 A</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="label">Trạng thái Rơ-le</span>
-                        <span class="value status-on" id="val-relay">BẬT (An toàn)</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Thẻ 2: Tổng hợp 12 giờ -->
-            <div class="card">
-                <h2>Tổng Hợp 12 Giờ Qua</h2>
-                <div class="summary-list">
-                    <div class="summary-item">
-                        <span class="label">Điện năng tiêu thụ tổng</span>
-                        <span class="value" id="val-kwh">0.0000 kWh</span>
-                    </div>
-                    <div class="summary-item">
-                        <span class="label">Nhiệt độ trung bình</span>
-                        <span class="value" style="color: #0284c7;" id="val-avg-temp">35.0000 °C</span>
-                    </div>
-                </div>
-                <p class="note">*Dữ liệu tổng hợp tự động cập nhật liên tục dựa trên giá trị nhận được.</p>
-            </div>
-
-            <!-- Thẻ 3: Biểu đồ Nhiệt độ 30 phút -->
-            <div class="card chart-card">
-                <h2>Biểu Đồ Nhiệt Độ - 30 Phút Qua</h2>
-                <div class="chart-container">
-                    <canvas id="temperatureChart"></canvas>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <!-- CỬA SỔ MÔ PHỎNG DỮ LIỆU (MODAL) -->
-    <div id="sim-modal" class="modal">
-        <div class="modal-content">
-            <button class="close-btn" onclick="closeModal()">&times;</button>
-            <h3 style="margin-bottom: 15px;">Mô Phỏng Truyền Dữ Liệu</h3>
-            <form onsubmit="submitSimulation(event)">
-                <div class="form-group">
-                    <label for="sim-temp">Nhiệt độ cảm biến (°C):</label>
-                    <input type="number" step="0.0001" id="sim-temp" value="36.5000" required>
-                </div>
-                <div class="form-group">
-                    <label for="sim-power">Công suất hao tổn (W):</label>
-                    <input type="number" step="0.0001" id="sim-power" value="0.2500" required>
-                </div>
-                <div class="form-group">
-                    <label for="sim-volt">Điện áp lưới (V):</label>
-                    <input type="number" id="sim-volt" value="220" required>
-                </div>
-                <button type="submit" class="btn-submit">Nạp Dữ Liệu Vào Hệ Thống</button>
-            </form>
+<div class="stage" id="stage">
+  <div class="scene" id="scene">
+    <div class="box" id="box">
+      <div class="f front">
+        <div class="brand">MONEY<b>MISSION</b></div>
+        <div class="pill">30 ngày trưởng thành</div>
+        <div class="tag">Trò chơi quản lý tiền cho tuổi teen. 3–6 người, 15–20 phút một ván.</div>
+        <div class="fan"><i class="k a">A</i><i class="k b">B</i><i class="k c">C</i></div>
+        <div class="coin c3">đ</div><div class="coin c2">đ</div><div class="coin c1">đ</div>
+        <div class="chips"><i style="background:#27AE60"></i><i style="background:#3498DB"></i><i style="background:#F39C12"></i><i style="background:#E74C3C"></i><i style="background:#16A085"></i><i style="background:#8E44AD"></i></div>
+      </div>
+      <div class="f back"><div class="in">
+        <h3>Bạn sẽ chọn cách chia nào?</h3>
+        <p>Quản lý 1.000.000đ tiền mô phỏng, rút thẻ tình huống và học qua quyết định cùng hậu quả của nó.</p>
+        <div class="opt">
+          <span style="background:#FEF3E0"><b>A</b>Nhu cầu 500K<br>Sở thích 200K<br>Tiết kiệm 300K</span>
+          <span style="background:#FCE9E7"><b>B</b>Nhu cầu 400K<br>Sở thích 500K<br>Tiết kiệm 100K</span>
+          <span style="background:#E3F4F1"><b>C</b>Nhu cầu 550K<br>Sở thích 100K<br>Tiết kiệm 350K</span>
         </div>
+        <ul><li>1 bàn chơi, 30 thẻ tình huống</li><li>Tiền mô phỏng, 4 bảng ngân sách</li><li>Tờ luật chơi và mã QR</li></ul>
+        <div class="info">Không có lựa chọn nào luôn đúng cho mọi người.</div>
+        <div class="qr">Dán mã QR luật chơi</div>
+      </div></div>
+      <div class="f right"><div class="spine"><span>MONEY <em>MISSION</em></span></div></div>
+      <div class="f left"><div class="spine"><span>30 ngày <em>trưởng thành</em></span></div></div>
+      <div class="f top"><div class="tl">MONEY <em>MISSION</em></div></div>
+      <div class="f bottom"><div class="bt">Bộ trò chơi giáo dục tài chính<br>cho học sinh. Tiền trong trò chơi chỉ là tiền mô phỏng.</div></div>
     </div>
+    <div class="shadow"></div>
+  </div>
+</div>
 
-    <script>
-        // --- CẤU HÌNH KẾT NỐI REALTIME VỚI FIREBASE ---
-        const firebaseUrl = "https://truyendulieu-default-rtdb.asia-southeast1.firebasedatabase.app/sensor.json";
-        const source = new EventSource(firebaseUrl);
+<div class="ctrl" id="ctrl" role="group" aria-label="Chọn mặt hộp">
+  <button data-v="front" aria-pressed="false">Mặt trước</button>
+  <button data-v="back" aria-pressed="false">Mặt sau</button>
+  <button data-v="right" aria-pressed="false">Cạnh bên</button>
+  <button data-v="top" aria-pressed="false">Nắp hộp</button>
+  <button id="spin" aria-pressed="true">Tự xoay</button>
+</div>
+<p class="hint">Hộp khoảng 36 × 25 × 8 cm. Mặt sau có chỗ trống để bạn dán mã QR sau khi tạo.</p>
 
-        // --- QUẢN LÝ DỮ LIỆU & BIỂU ĐỒ ---
-        const MAX_POINTS = 30; // Lưu 30 điểm tương ứng 30 phút
-        let timeLabels = Array.from({length: MAX_POINTS}, (_, i) => `${MAX_POINTS - i}p trước`);
-        let temperatureData = new Array(MAX_POINTS).fill(35.0000); 
-        
-        let lastTemperature = 35.0; 
-        let totalEnergyJoules = 0;   
-        let tempSum = 0;
-        let sampleCount = 0;
-
-        // Khởi tạo Chart.js cho Nhiệt độ
-        const ctx = document.getElementById('temperatureChart').getContext('2d');
-        const temperatureChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: timeLabels,
-                datasets: [{
-                    label: 'Nhiệt độ (°C)',
-                    data: temperatureData,
-                    borderColor: '#f97316', 
-                    backgroundColor: 'rgba(249, 115, 22, 0.15)',
-                    borderWidth: 2,
-                    fill: true,
-                    tension: 0.3
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        title: { display: true, text: 'Nhiệt độ (°C)' },
-                        suggestedMin: 20, 
-                        suggestedMax: 80
-                    },
-                    x: {
-                        title: { display: true, text: 'Thời gian' }
-                    }
-                }
-            }
-        });
-
-        // --- XỬ LÝ DỮ LIỆU NHẬN TỪ ESP32 HOẶC MÔ PHỎNG ---
-        function updateDashboard(temperature, power, relayState) {
-            lastTemperature = temperature;
-
-            // 1. Hiển thị dữ liệu lên các thẻ (lấy 4 số thập phân)
-            document.getElementById('val-temp').innerText = temperature.toFixed(4) + " °C";
-            document.getElementById('val-power').innerText = power.toFixed(4) + " W";
-            
-            // Tính dòng điện I = P / 220V
-            let current = power / 220.0;
-            document.getElementById('val-amp').innerText = current.toFixed(4) + " A";
-
-            // Relay State (theo code C++: HIGH = 1 = Ngắt, LOW = 0 = Mạch đóng)
-            const relayElem = document.getElementById('val-relay');
-            if (relayState === 1 || relayState === true) {
-                relayElem.innerText = "NGẮT (Bảo vệ)";
-                relayElem.className = "value status-off";
-            } else {
-                relayElem.innerText = "BẬT (An toàn)";
-                relayElem.className = "value status-on";
-            }
-
-            // 2. Cập nhật biểu đồ nhiệt độ
-            temperatureChart.data.labels.shift();
-            let now = new Date();
-            temperatureChart.data.labels.push(`${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`);
-            
-            temperatureChart.data.datasets[0].data.shift();
-            temperatureChart.data.datasets[0].data.push(temperature.toFixed(4));
-            temperatureChart.update();
-
-            // 3. Tích lũy dữ liệu cho tổng hợp 12h
-            tempSum += temperature;
-            sampleCount++;
-            
-            totalEnergyJoules += (power * 60); 
-            
-            let avgTemp = tempSum / sampleCount;
-            let kwh = totalEnergyJoules / (3600 * 1000); 
-
-            document.getElementById('val-avg-temp').innerText = avgTemp.toFixed(4) + " °C";
-            document.getElementById('val-kwh').innerText = kwh.toFixed(4) + " kWh";
-        }
-
-        // --- NHẬN DỮ LIỆU REALTIME TỪ FIREBASE ---
-        source.addEventListener('put', function(e) {
-            const response = JSON.parse(e.data);
-            const data = response.data;
-            if (data) {
-                let temp = data.temperature !== undefined ? Number(data.temperature) : 35.0;
-                let powerVal = data.p_loss !== undefined ? Number(data.p_loss) : (data.power !== undefined ? Number(data.power) : 0.25);
-                let relay = data.relay !== undefined ? data.relay : 0;
-
-                updateDashboard(temp, powerVal, relay);
-            }
-        });
-
-        // --- HÀM TỰ ĐỘNG CẬP NHẬT MỖI 1 PHÚT ---
-        setInterval(() => {
-            let currentTemp = lastTemperature + (Math.random() * 0.4 - 0.2); 
-            let currentPower = parseFloat(document.getElementById('val-power').innerText);
-            let relayIsTriggered = currentTemp > 65 ? 1 : 0;
-            
-            updateDashboard(currentTemp, currentPower, relayIsTriggered);
-        }, 60000);
-
-        // --- BẬT/TẮT MODAL MÔ PHỎNG ---
-        function openModal() {
-            document.getElementById('sim-modal').style.display = 'flex';
-        }
-
-        function closeModal() {
-            document.getElementById('sim-modal').style.display = 'none';
-        }
-
-        function submitSimulation(event) {
-            event.preventDefault();
-            let simTemp = parseFloat(document.getElementById('sim-temp').value);
-            let simPower = parseFloat(document.getElementById('sim-power').value);
-
-            updateDashboard(simTemp, simPower, simTemp >= 65 ? 1 : 0);
-            closeModal();
-        }
-
-        window.onclick = function(e) {
-            let modal = document.getElementById('sim-modal');
-            if (e.target === modal) {
-                closeModal();
-            }
-        };
-    </script>
+<script>
+(function(){
+  var box=document.getElementById('box'),stage=document.getElementById('stage'),scene=document.getElementById('scene');
+  var rx=-16,ry=-30,auto=true,drag=false,lx=0,ly=0,reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduce)auto=false;
+  var spin=document.getElementById('spin');spin.setAttribute('aria-pressed',auto);
+  function apply(){box.style.transform='rotateX('+rx+'deg) rotateY('+ry+'deg)'}
+  function fit(){var s=Math.min(1,(window.innerWidth-40)/470);scene.style.setProperty('--s',s);stage.style.height=Math.round(400*Math.max(s,.6))+'px'}
+  stage.addEventListener('pointerdown',function(e){drag=true;lx=e.clientX;ly=e.clientY;box.style.transition='none';stage.setPointerCapture(e.pointerId);auto=false;spin.setAttribute('aria-pressed','false');clearViews()});
+  stage.addEventListener('pointermove',function(e){if(!drag)return;ry+=(e.clientX-lx)*.6;rx-=(e.clientY-ly)*.6;rx=Math.max(-90,Math.min(90,rx));lx=e.clientX;ly=e.clientY;apply()});
+  stage.addEventListener('pointerup',function(){drag=false});
+  stage.addEventListener('pointercancel',function(){drag=false});
+  var views={front:[-8,0],back:[-8,180],right:[-8,-90],top:[-80,0]};
+  var btns=[].slice.call(document.querySelectorAll('[data-v]'));
+  function clearViews(){btns.forEach(function(b){b.setAttribute('aria-pressed','false')})}
+  btns.forEach(function(b){b.addEventListener('click',function(){
+    var v=views[b.dataset.v];auto=false;spin.setAttribute('aria-pressed','false');clearViews();b.setAttribute('aria-pressed','true');
+    var cur=((ry%360)+360)%360,tgt=((v[1]%360)+360)%360,d=tgt-cur;if(d>180)d-=360;if(d<-180)d+=360;
+    box.style.transition=reduce?'none':'transform .9s cubic-bezier(.3,.7,.2,1)';rx=v[0];ry=ry+d;apply();
+  })});
+  spin.addEventListener('click',function(){auto=!auto;spin.setAttribute('aria-pressed',auto);clearViews();box.style.transition='none'});
+  function tick(){if(auto&&!drag){ry+=.35;apply()}requestAnimationFrame(tick)}
+  window.addEventListener('resize',fit);fit();apply();if(!reduce)tick();
+})();
+</script>
 </body>
 </html>
