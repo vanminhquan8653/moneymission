@@ -162,10 +162,11 @@ button { font: inherit; color: inherit; }
   background: var(--paper); border: 3px solid var(--line); border-radius: 22px; box-shadow: 6px 6px 0 var(--shadow);
 }
 .panel__tab {
-  position: absolute; top: -17px; left: 16px; padding: 2px 15px 1px;
+  position: absolute; top: -17px; left: 16px; max-width: calc(100% - 32px); padding: 2px 15px 1px;
   background: var(--tab, var(--t-goal)); color: var(--on-color);
   border: 2.5px solid var(--edge); border-radius: 999px; box-shadow: 2px 2px 0 var(--shadow);
   font: 800 16px/1.5 var(--font-display);
+  white-space: nowrap; text-overflow: ellipsis; overflow: hidden;
 }
 
 .btn {
@@ -319,7 +320,10 @@ button { font: inherit; color: inherit; }
 /* Chú giải 6 loại ô */
 .legend { display: grid; gap: 6px 10px; }
 .legend--center { grid-template-columns: repeat(3, auto); justify-content: center; }
-.legend--below  { display: none; grid-template-columns: 1fr 1fr; margin-top: 18px; gap: 10px; }
+.legend-drawer  { display: none; margin-top: 14px; background: var(--paper); border: 2.5px solid var(--line); border-radius: 14px; padding: 10px 14px; box-shadow: 4px 4px 0 var(--shadow); }
+.legend-drawer summary { cursor: pointer; font: 800 15px/1.3 var(--font-display); list-style: none; text-align: center; }
+.legend-drawer summary::-webkit-details-marker { display: none; }
+.legend--below  { display: grid; grid-template-columns: 1fr 1fr; margin-top: 10px; gap: 10px; }
 .legend__item { display: flex; align-items: center; gap: 7px; font: 600 clamp(9px, 1.5cqw, 12.5px)/1.25 var(--font-body); text-align: left; }
 .legend__icon {
   display: grid; place-items: center; flex: none; width: 2.5em; height: 2.5em;
@@ -328,13 +332,13 @@ button { font: inherit; color: inherit; }
 .legend__text { display: grid; }
 .legend__text small { font-weight: 400; color: var(--ink-soft); }
 .legend--center small { display: none; }
-.legend--below .legend__item { font-size: 13px; padding: 8px; background: var(--paper); border: 2px solid var(--line); border-radius: 12px; }
+.legend--below .legend__item { font-size: 13px; padding: 8px; background: var(--paper-2); border: 2px solid var(--line); border-radius: 12px; }
 .legend--below .legend__text small { font-size: 12px; }
 
 /* Bàn cờ nhỏ (điện thoại, cột hẹp): ẩn bớt chữ cho gọn */
 @container (max-width: 560px) {
   .legend--center { display: none; }
-  .legend--below  { display: grid; }
+  .legend-drawer  { display: block; }
   .cell__label    { display: none; }
   .cell           { justify-content: flex-start; }
 }
@@ -354,6 +358,12 @@ button { font: inherit; color: inherit; }
 .pip.on::before { content: ""; width: 15px; height: 15px; background: #1b1740; border-radius: 50%; }
 .die__q { grid-area: 1 / 1 / 4 / 4; display: grid; place-items: center; font: 800 42px/1 var(--font-display); color: #1b1740; }
 .die.is-rolling { animation: shake .36s linear infinite; }
+@media (min-width: 700px) {
+  .die.is-rolling {
+    box-shadow: 0 8px 0 var(--shadow), 0 0 0 4px var(--t-goal);
+    scale: 1.06;
+  }
+}
 .dice-info__day { font: 800 24px/1.1 var(--font-display); }
 .dice-info__text { margin-top: 4px; font-size: 14px; color: var(--ink-soft); }
 
@@ -510,20 +520,65 @@ button { font: inherit; color: inherit; }
 @keyframes flash-up   { 0% { background: var(--pos-bg); box-shadow: 0 0 0 3px var(--pos-fg); } 100% { background: var(--paper-2); box-shadow: 0 0 0 0 transparent; } }
 @keyframes flash-down { 0% { background: var(--neg-bg); box-shadow: 0 0 0 3px var(--neg-fg); } 100% { background: var(--paper-2); box-shadow: 0 0 0 0 transparent; } }
 
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+:root[data-motion="off"] *,
+:root[data-motion="off"] *::before,
+:root[data-motion="off"] *::after {
+  animation-duration: .01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: .01ms !important;
+}
+
+.topbar__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.topbar__note--warn {
+  padding: 4px 10px;
+  color: var(--warn-fg);
+  background: var(--warn-bg);
+  border: 1.5px solid var(--warn-fg);
+  border-radius: 10px;
+  font-weight: 700;
+  opacity: 1;
+}
+.toast {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 999;
+  max-width: min(420px, calc(100vw - 32px));
+  padding: 10px 14px;
+  font: 700 13.5px/1.4 var(--font-body);
+  color: var(--warn-fg);
+  background: var(--paper);
+  border: 2.5px solid var(--edge);
+  border-radius: 14px;
+  box-shadow: 0 5px 0 var(--shadow);
+  pointer-events: none;
 }
 
 /* ---------- Multiplayer · phím tắt · nổi số tiền · nhìn trộm ---------- */
 .roster { display: grid; gap: 6px; margin: 0 0 14px; padding: 0; list-style: none; }
 .roster[hidden] { display: none; }
-.roster__item { display: grid; grid-template-columns: auto 1fr auto auto; align-items: center; gap: 8px; padding: 6px 10px; font-size: 13px; background: var(--paper-2); border: 2px solid var(--line); border-radius: 12px; }
+.roster__item { display: grid; grid-template-columns: auto 1fr auto auto; align-items: center; gap: 8px; padding: 6px 10px; font-size: 13px; background: var(--paper-2); border: 2px solid var(--line); border-radius: 12px; cursor: pointer; }
 .roster__item.is-current { background: var(--pc); color: var(--on-color); box-shadow: 0 3px 0 var(--shadow); }
+.roster__item.is-viewed { outline: 2.5px dashed var(--ink); outline-offset: 2px; }
 .roster__item.is-done { opacity: .6; }
 .roster__name { overflow: hidden; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
-.roster__day { opacity: .75; }
+.roster__day { opacity: .75; white-space: nowrap; }
 .roster__dot { display: inline-block; width: 12px; height: 12px; margin-right: 4px; vertical-align: -1px; background: var(--pc); border: 2px solid var(--edge); border-radius: 50%; }
 .roster__item .roster__dot { margin: 0; }
+@media (min-width: 1040px) and (max-width: 1299px) {
+  .roster__item {
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas: "dot name name" "dot day money";
+    gap: 2px 8px;
+  }
+  .roster__item .roster__dot  { grid-area: dot; }
+  .roster__item .roster__name { grid-area: name; }
+  .roster__item .roster__day  { grid-area: day; }
+  .roster__item > b           { grid-area: money; text-align: right; }
+}
+@media (max-width: 699px) {
+  .btn--roll { position: sticky; bottom: 12px; z-index: 10; }
+}
 .token--multi { right: auto; bottom: calc(4% + var(--row, 0) * 38%); left: calc(3% + var(--col, 0) * 24%); width: 24%; height: 36%; margin: 0; }
 .token--current { z-index: 4; }
 .token--current .token__svg { filter: drop-shadow(0 0 3px #fff) drop-shadow(0 0 1px var(--ink)); }
@@ -557,8 +612,11 @@ button { font: inherit; color: inherit; }
         <span class="brand__tag">30 ngày trưởng thành</span>
       </span>
     </h1>
-    <p class="topbar__note">Trò chơi quản lý tiền cho tuổi teen. Tiền trong trò chơi chỉ là tiền mô phỏng.</p>
-    <button type="button" class="btn btn--small" id="restartBtn">Chơi lại</button>
+    <p class="topbar__note" id="topbarNote">Trò chơi quản lý tiền cho tuổi teen. Tiền trong trò chơi chỉ là tiền mô phỏng.</p>
+    <div class="topbar__actions">
+      <button type="button" class="btn btn--small" id="motionBtn" aria-pressed="true" title="Bật hoặc tắt hiệu ứng chuyển động">⚡ Hiệu ứng: Bật</button>
+      <button type="button" class="btn btn--small" id="restartBtn">Chơi lại</button>
+    </div>
   </header>
 
   <main class="layout">
@@ -608,7 +666,10 @@ button { font: inherit; color: inherit; }
         </div>
         <!-- 30 ô cờ và quân cờ được thêm vào đây bằng JavaScript -->
       </div>
-      <ul class="legend legend--below" id="legendBelow"></ul>
+      <details class="legend-drawer">
+        <summary>Xem chú giải các loại ô ▾</summary>
+        <ul class="legend legend--below" id="legendBelow"></ul>
+      </details>
     </section>
 
     <!-- ============ PHẢI: Xúc xắc và thẻ bài ============ -->
@@ -641,6 +702,7 @@ button { font: inherit; color: inherit; }
           <ul>
             <li>Không vay tiền. Quỹ nào không đủ sẽ lấy từ quỹ khác và ghi lý do vào nhật ký.</li>
             <li>Không có lựa chọn nào luôn đúng cho mọi người. Hãy cân nhắc hoàn cảnh, các khoản cần chi và mục tiêu của bạn.</li>
+            <li>Đá quân: Nếu bạn dừng tại ô đang có người chơi khác (trừ Ngày 1, các ô An toàn tài chính 🛡️ và người đã về đích), người đó sẽ bị đá về lại Ngày 1.</li>
           </ul>
         </details>
         <details>
@@ -704,13 +766,13 @@ const BUDGET_PLANS = [
   { id: 'C', name: 'Ưu tiên tiết kiệm', ratio: [55, 10, 35] },   // 550.000 / 100.000 / 350.000
 ];
 
-// Năm thẻ Mục tiêu
+// Năm thẻ Mục tiêu (đã cân bằng độ thử thách để không đạt điểm tối đa ngay từ vạch xuất phát)
 const GOALS = [
-  { id: 26, icon: '📚', name: 'Khóa học',          target: 300000, desc: 'Tiết kiệm cho một khóa học kỹ năng.',                     lesson: 'Mục tiêu rõ ràng giúp bạn biết mình đang tiết kiệm vì điều gì.' },
-  { id: 27, icon: '🎒', name: 'Đồ dùng cần thiết', target: 400000, desc: 'Tiết kiệm mua một món đồ cần thiết cho học tập.',          lesson: 'Hãy ưu tiên món đồ bạn thật sự cần.' },
-  { id: 28, icon: '🏕️', name: 'Dã ngoại lớp',      target: 250000, desc: 'Tiết kiệm để tham gia một hoạt động dã ngoại của lớp.',   lesson: 'Trải nghiệm cùng bạn bè cũng là một mục tiêu đáng tiết kiệm.' },
-  { id: 29, icon: '📖', name: 'Sách và tài liệu',  target: 200000, desc: 'Tiết kiệm mua bộ sách bạn muốn đọc lâu nay.',             lesson: 'Mục tiêu nhỏ vẫn là bước khởi đầu tốt.' },
-  { id: 30, icon: '☂️', name: 'Quỹ dự phòng',      target: 300000, desc: 'Xây dựng một quỹ dự phòng cho những chi phí bất ngờ.',    lesson: 'Quỹ dự phòng giúp bạn bình tĩnh khi có biến cố.' },
+  { id: 26, icon: '📚', name: 'Khóa học',          target: 400000, desc: 'Tiết kiệm cho một khóa học kỹ năng.',                     lesson: 'Mục tiêu rõ ràng giúp bạn biết mình đang tiết kiệm vì điều gì.' },
+  { id: 27, icon: '🎒', name: 'Đồ dùng cần thiết', target: 500000, desc: 'Tiết kiệm mua một món đồ cần thiết cho học tập.',          lesson: 'Hãy ưu tiên món đồ bạn thật sự cần.' },
+  { id: 28, icon: '🏕️', name: 'Dã ngoại lớp',      target: 350000, desc: 'Tiết kiệm để tham gia một hoạt động dã ngoại của lớp.',   lesson: 'Trải nghiệm cùng bạn bè cũng là một mục tiêu đáng tiết kiệm.' },
+  { id: 29, icon: '📖', name: 'Sách và tài liệu',  target: 300000, desc: 'Tiết kiệm mua bộ sách bạn muốn đọc lâu nay.',             lesson: 'Mục tiêu nhỏ vẫn là bước khởi đầu tốt.' },
+  { id: 30, icon: '☂️', name: 'Quỹ dự phòng',      target: 450000, desc: 'Xây dựng một quỹ dự phòng cho những chi phí bất ngờ.',    lesson: 'Quỹ dự phòng giúp bạn bình tĩnh khi có biến cố.' },
 ];
 
 // Bảy loại ô (cũng là loại thẻ). `color` là tên biến màu trong CSS.
@@ -774,7 +836,7 @@ const CARDS = [
     options: [
       { key: 'A', label: 'Mua ngay',                                effects: { want: -150000 } },
       { key: 'B', label: 'Ghi vào danh sách “muốn mua”, chờ thêm',   effects: {} },
-      { key: 'C', label: 'Bỏ qua, chuyển 50.000₫ vào Tiết kiệm',     effects: { save: 50000 } },
+      { key: 'C', label: 'Bỏ qua, chuyển 50.000₫ vào Tiết kiệm',     effects: { want: -50000, save: 50000 } },
     ],
     lesson: 'Giảm giá không đồng nghĩa với tiết kiệm nếu bạn không cần món đồ đó.' },
 
@@ -870,7 +932,7 @@ const CARDS = [
     lesson: 'Rẻ nhất chưa chắc là rẻ nhất khi tính cả độ bền và an toàn.' },
 
   { id: 12, type: 'incident', title: 'Hết tiền Sở thích',
-    text: 'Quỹ Sở thích của bạn đã hết nhưng nhóm bạn rủ đi xem phim, vé 90.000₫.',
+    text: 'Giả sử quỹ Sở thích của bạn đang cạn, nhưng nhóm bạn rủ đi xem phim, vé 90.000₫.',
     options: [
       { key: 'A', label: 'Đi, lấy từ quỹ Tiết kiệm',    effects: { save: -90000 } },
       { key: 'B', label: 'Hẹn đợt sau',                 effects: {} },
@@ -890,9 +952,9 @@ const CARDS = [
   { id: 14, type: 'incident', title: 'Món đồ bị lỗi',
     text: 'Bạn mua một món đồ 100.000₫ nhưng về nhà phát hiện bị lỗi. Bạn còn giữ hóa đơn.',
     options: [
-      { key: 'A', label: 'Bỏ đó và quên đi',  effects: {} },
-      { key: 'B', label: 'Mang đi đổi trả',   effects: { want: 100000 } },
-      { key: 'C', label: 'Mua cái mới',       effects: { want: -100000 } },
+      { key: 'A', label: 'Bỏ đó và quên đi',  effects: { want: -100000 } },
+      { key: 'B', label: 'Mang đi đổi trả',   effects: {} },
+      { key: 'C', label: 'Mua cái mới',       effects: { want: -200000 } },
     ],
     lesson: 'Giữ hóa đơn giúp bạn bảo vệ quyền lợi của mình.' },
 
@@ -1032,7 +1094,60 @@ const $  = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 const clamp = (n, min, max) => Math.min(max, Math.max(min, n));
 const pad2 = n => String(n).padStart(2, '0');
-const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+// Chống XSS: mã hóa các ký tự HTML đặc biệt trước khi đưa vào template string
+const esc = text => String(text ?? '').replace(/[&<>"']/g, c => ({
+  '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+}[c]));
+
+/* ---------- Bộ sinh số giả ngẫu nhiên (PRNG Mulberry32) có hỗ trợ Seed ---------- */
+let rngFunc = Math.random;
+
+function hashSeedString(str) {
+  let h = 1779033703 ^ str.length;
+  for (let i = 0; i < str.length; i++) {
+    h = Math.imul(h ^ str.charCodeAt(i), 3432918353);
+    h = (h << 13) | (h >>> 19);
+  }
+  h = Math.imul(h ^ (h >>> 16), 2246822507);
+  h = Math.imul(h ^ (h >>> 13), 3266489909);
+  return (h ^= h >>> 16) >>> 0;
+}
+
+function mulberry32(seed) {
+  let a = seed >>> 0;
+  return () => {
+    let t = (a += 0x6D2B79F5);
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/**
+ * Thiết lập seed cho bộ sinh số ngẫu nhiên (phục vụ kiểm thử hoặc đồng bộ lớp học).
+ * Truyền null/undefined/'' để quay về Math.random mặc định.
+ */
+function setGameSeed(seed) {
+  if (seed === null || seed === undefined || seed === '') {
+    rngFunc = Math.random;
+    return null;
+  }
+  const numericSeed = typeof seed === 'number' && Number.isFinite(seed)
+    ? (seed >>> 0)
+    : hashSeedString(String(seed));
+  rngFunc = mulberry32(numericSeed);
+  return numericSeed;
+}
+window.setGameSeed = setGameSeed;
+
+// Tự động đọc tham số ?seed=... trên URL nếu có
+try {
+  const urlSeed = new URLSearchParams(window.location.search).get('seed');
+  if (urlSeed !== null && urlSeed !== '') setGameSeed(urlSeed);
+} catch (_) {}
+
+const randomInt = (min, max) => Math.floor(rngFunc() * (max - min + 1)) + min;
 
 // 1000000 → "1.000.000₫"; số âm dùng dấu trừ "−"
 const group  = n => String(Math.abs(Math.round(n))).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
@@ -1040,7 +1155,31 @@ const money  = n => (n < 0 ? '−' : '') + group(n) + '₫';
 const signed = n => (n > 0 ? '+' : n < 0 ? '−' : '') + group(n) + '₫';
 const shortMoney = n => Math.round(n / 1000) + 'K';
 
-const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const MOTION_PREF_KEY = 'money_mission_animation_pref';
+let reduceMotion = (() => {
+  try {
+    const pref = localStorage.getItem(MOTION_PREF_KEY);
+    if (pref === 'off') return true;
+    if (pref === 'on') return false;
+  } catch (_) {}
+  // Mặc định BẬT hiệu ứng (override cài đặt prefers-reduced-motion của OS)
+  return false;
+})();
+document.documentElement.dataset.motion = reduceMotion ? 'off' : 'on';
+
+function setMotionEnabled(enabled, persist = true) {
+  reduceMotion = !enabled;
+  document.documentElement.dataset.motion = reduceMotion ? 'off' : 'on';
+  const btn = $('#motionBtn');
+  if (btn) {
+    btn.textContent = reduceMotion ? '⚡ Hiệu ứng: Tắt' : '⚡ Hiệu ứng: Bật';
+    btn.setAttribute('aria-pressed', String(!reduceMotion));
+  }
+  if (persist) {
+    try { localStorage.setItem(MOTION_PREF_KEY, reduceMotion ? 'off' : 'on'); } catch (_) {}
+  }
+}
+
 const sleep = ms => new Promise(resolve => setTimeout(resolve, reduceMotion ? 0 : ms));
 
 // Tạo phần tử DOM từ một đoạn HTML (chỉ dùng với nội dung do chương trình tự sinh)
@@ -1073,10 +1212,10 @@ function chipsFromChanges(changes) {
    ===================================================================== */
 
 /**
- * Trừ `cost` đồng từ quỹ `fundId`.
+ * Trừ `cost` đồng chi tiêu bắt buộc từ quỹ `fundId`.
  *  1) Trừ trong chính quỹ đó (không để âm).
  *  2) Thiếu → lấy từ quỹ khác theo FALLBACK_ORDER và ghi chú lý do.
- *  3) Hết sạch tiền cả 3 quỹ mà vẫn thiếu → quỹ bị ghi âm (không được vay).
+ *  3) Cả 3 quỹ đều cạn kiệt mà vẫn thiếu → ghi âm rõ ràng là "khoản thiếu hụt do không vay tiền".
  */
 function spend(fundId, cost, notes) {
   let remaining = cost;
@@ -1097,21 +1236,59 @@ function spend(fundId, cost, notes) {
 
   if (remaining > 0) {
     state.funds[fundId] -= remaining;
-    notes.push(`Hết tiền! Còn thiếu ${money(remaining)} và bạn không được vay, nên quỹ ${FUNDS[fundId].name} bị âm.`);
+    notes.push(`Cả 3 quỹ đã cạn kiệt! Khoản thiếu hụt do không vay tiền là ${money(remaining)}, được ghi âm vào quỹ ${FUNDS[fundId].name}.`);
   }
 }
 
 /**
- * Áp dụng một nhóm thay đổi tiền, ví dụ { want: -150000, save: 50000 }.
+ * Áp dụng một nhóm thay đổi tiền, ví dụ { want: -150000 } hoặc chuyển quỹ { want: -50000, save: 50000 }.
+ *  - Nếu là chuyển quỹ nội bộ giữa 2 quỹ (1 khoản âm, 1 khoản dương đối nhau):
+ *    chỉ chuyển tối đa số dư thực tế đang có ở quỹ nguồn, TUYỆT ĐỐI KHÔNG gọi spend() rút từ quỹ thứ ba.
+ *  - Nếu là thu/chi thông thường: ưu tiên xử lý các khoản cộng tiền trước, trừ tiền sau.
  * Trả về { changes, notes }: số tiền mỗi quỹ thực sự thay đổi + các ghi chú lý do.
  */
 function applyEffects(effects) {
   const before = { ...state.funds };
   const notes = [];
+  const entries = Object.entries(effects || {}).filter(
+    ([fundId, amount]) => FUND_IDS.includes(fundId) && typeof amount === 'number' && Number.isFinite(amount) && amount !== 0
+  );
 
-  for (const [fundId, amount] of Object.entries(effects)) {
-    if (amount >= 0) state.funds[fundId] += amount;
-    else spend(fundId, -amount, notes);
+  const posEntries = entries.filter(([, amount]) => amount > 0);
+  const negEntries = entries.filter(([, amount]) => amount < 0);
+
+  // Phát hiện giao dịch chuyển quỹ nội bộ (ví dụ: { want: -50000, save: 50000 })
+  const isInternalTransfer =
+    posEntries.length === 1 &&
+    negEntries.length === 1 &&
+    posEntries[0][0] !== negEntries[0][0] &&
+    posEntries[0][1] === -negEntries[0][1];
+
+  if (isInternalTransfer) {
+    const [fromFund, negAmount] = negEntries[0];
+    const [toFund] = posEntries[0];
+    const requested = -negAmount;
+    const available = Math.max(0, state.funds[fromFund]);
+    const actual = Math.min(available, requested);
+
+    if (actual > 0) {
+      state.funds[fromFund] -= actual;
+      state.funds[toFund] += actual;
+    }
+
+    if (actual === 0) {
+      notes.push(`Quỹ ${FUNDS[fromFund].name} đang không còn tiền nên không thể chuyển sang quỹ ${FUNDS[toFund].name}.`);
+    } else if (actual < requested) {
+      notes.push(`Quỹ ${FUNDS[fromFund].name} chỉ còn ${money(actual)} nên chỉ chuyển số tiền thực có sang quỹ ${FUNDS[toFund].name} (không rút từ quỹ khác).`);
+    }
+  } else {
+    // Ưu tiên cộng tiền trước, trừ tiền sau
+    for (const [fundId, amount] of posEntries) {
+      state.funds[fundId] += amount;
+    }
+    for (const [fundId, amount] of negEntries) {
+      spend(fundId, -amount, notes);
+    }
   }
 
   const changes = FUND_IDS
@@ -1151,6 +1328,7 @@ const cellEls    = [];                 // 30 phần tử ô cờ
 const fundNodes  = {};                 // phần tử hiển thị từng quỹ
 const shownFunds = { need: 0, want: 0, save: 0 };   // số tiền đang hiển thị (để nháy khi đổi)
 let shownPlayer = null;                 // người chơi mà khối ngân sách đang hiển thị
+let viewedPlayer = null;                // người chơi đang được chọn xem trong bảng #roster
 
 // Vị trí ô số i trên lưới 9×8, đi theo chiều kim đồng hồ từ góc trên-trái
 function getGridPosition(i) {
@@ -1222,8 +1400,11 @@ function flash(node, direction) {
 }
 
 function renderBudget() {
-  const f = state.funds;
+  const p = viewedPlayer || state.player;
+  const f = p.funds;
   const total = f.need + f.want + f.save;
+
+  $('.panel--budget .panel__tab').textContent = state.players.length > 1 ? `Ngân sách · ${p.name}` : 'Ngân sách';
 
   const totalEl = $('#totalValue');
   totalEl.textContent = money(total);
@@ -1234,17 +1415,17 @@ function renderBudget() {
     node.amount.textContent = money(f[id]);
     node.amount.classList.toggle('is-negative', f[id] < 0);
     node.fill.style.width = `${clamp(f[id] / START_BUDGET * 100, 0, 100)}%`;
-    if (shownPlayer === state.player && f[id] !== shownFunds[id]) {
+    if (shownPlayer === p && f[id] !== shownFunds[id]) {
       flash(node.root, f[id] > shownFunds[id] ? 'up' : 'down');
       floatMoney(node.root, f[id] - shownFunds[id]);
     }
     shownFunds[id] = f[id];
   });
-  shownPlayer = state.player;
+  shownPlayer = p;
   renderRoster();
 
   // Mục tiêu tiết kiệm
-  const goal = state.goal;
+  const goal = p.goal;
   if (goal) {
     $('#goalName').textContent = `${goal.icon} ${goal.name}`;
     $('#goalTarget').textContent = `cần ${money(goal.target)}`;
@@ -1259,30 +1440,33 @@ function renderBudget() {
     $('#goalStatus').textContent = '';
   }
 
-  $('#safetyPoints').textContent = `+${state.safetyCorrect * POINTS.safety}`;
+  $('#safetyPoints').textContent = `+${p.safetyCorrect * POINTS.safety}`;
 }
 
 function renderLog() {
   const list = $('#logList');
-  if (state.log.length === 0) {
+  const p = viewedPlayer || state.player;
+  $('.log__title').textContent = state.players.length > 1 ? `Nhật ký · ${p.name}` : 'Nhật ký';
+  if (p.log.length === 0) {
     list.innerHTML = '<li class="empty">Chưa có khoản thu chi nào.</li>';
     return;
   }
-  list.innerHTML = state.log.map(entry => `
+  list.innerHTML = p.log.map(entry => `
     <li class="log__item">
       <span class="log__day">Ngày ${entry.day}</span>
       <div class="log__body">
-        <span class="log__name">${entry.title}</span>
-        <div class="chips">${chipsFromChanges(entry.changes)}</div>
-        ${entry.notes.map(n => `<span class="log__note">${n}</span>`).join('')}
+        <span class="log__name">${esc(entry.title)}</span>
+        ${Array.isArray(entry.changes) && entry.changes.length > 0 ? `<div class="chips">${chipsFromChanges(entry.changes)}</div>` : ''}
+        ${(entry.notes || []).map(n => `<span class="log__note">${esc(n)}</span>`).join('')}
       </div>
     </li>`).join('');
 }
 
 function renderBoard() {
   cellEls.forEach((el, i) => {
+    const hasPlayer = state.players.some(p => p.position === i);
     el.classList.toggle('cell--active', i === state.position);
-    el.classList.toggle('cell--past', i < state.position);
+    el.classList.toggle('cell--past', i < state.position && !hasPlayer);
   });
   layoutTokens();
   $$('[data-day-now]').forEach(el => { el.textContent = state.position + 1; });
@@ -1303,7 +1487,8 @@ function renderDie(value) {
 
 function renderLastEvent() {
   const box = $('#lastCard');
-  const ev = state.lastEvent;
+  const p = viewedPlayer || state.player;
+  const ev = p.lastEvent;
   if (!ev) {
     box.innerHTML = '<p class="empty">Chưa có thẻ nào. Tung xúc xắc để rút thẻ đầu tiên.</p>';
     return;
@@ -1313,12 +1498,12 @@ function renderLastEvent() {
     <article class="mini-card" style="--tcolor: var(${meta.color})">
       <header class="mini-card__head"><span>${meta.icon} ${meta.name}</span><span>Ngày ${ev.day}</span></header>
       <div class="mini-card__body">
-        <h3>${ev.title}</h3>
-        ${ev.text ? `<p>${ev.text}</p>` : ''}
-        ${ev.choice ? `<p class="mini-card__choice">Bạn chọn: <b>${ev.choice}</b></p>` : ''}
+        <h3>${esc(ev.title)}</h3>
+        ${ev.text ? `<p>${esc(ev.text)}</p>` : ''}
+        ${ev.choice ? `<p class="mini-card__choice">Bạn chọn: <b>${esc(ev.choice)}</b></p>` : ''}
         ${Array.isArray(ev.changes) ? `<div class="chips">${chipsFromChanges(ev.changes)}</div>` : ''}
-        ${(ev.notes || []).map(n => `<p class="note">${n}</p>`).join('')}
-        ${ev.lesson ? `<p class="lesson"><b>💡 Bài học:</b> ${ev.lesson}</p>` : ''}
+        ${(ev.notes || []).map(n => `<p class="note">${esc(n)}</p>`).join('')}
+        ${ev.lesson ? `<p class="lesson"><b>💡 Bài học:</b> ${esc(ev.lesson)}</p>` : ''}
       </div>
     </article>`;
 }
@@ -1348,20 +1533,29 @@ function renderAll() {
   $('#boardMessage').textContent = state.message;
 }
 
-// Đưa quân cờ sang ô state.position, có hiệu ứng nhảy từ ô cũ sang ô mới (kỹ thuật FLIP)
-function placeToken(animate) {
-  const tokenEl = state.player.tokenEl;
-  const from = tokenEl.isConnected ? tokenEl.getBoundingClientRect() : null;
+// Đưa quân cờ sang ô mới, có hiệu ứng nhảy/văng từ ô cũ sang ô mới (kỹ thuật FLIP)
+function placeToken(animate, duration = 280) {
+  const rects = new Map();
+  if (animate && !reduceMotion) {
+    state.players.forEach(p => {
+      if (p.tokenEl && p.tokenEl.isConnected) rects.set(p, p.tokenEl.getBoundingClientRect());
+    });
+  }
   layoutTokens();
-  if (animate && from && !reduceMotion && tokenEl.animate) {
-    const to = tokenEl.getBoundingClientRect();
-    const dx = from.left - to.left;
-    const dy = from.top - to.top;
-    tokenEl.animate([
-      { transform: `translate(${dx}px, ${dy}px)` },
-      { transform: `translate(${dx / 2}px, ${dy / 2 - 12}px)`, offset: 0.5 },
-      { transform: 'translate(0, 0)' },
-    ], { duration: 280, easing: 'ease-in-out' });
+  if (animate && !reduceMotion) {
+    rects.forEach((from, p) => {
+      if (!p.tokenEl || !p.tokenEl.animate) return;
+      const to = p.tokenEl.getBoundingClientRect();
+      const dx = from.left - to.left;
+      const dy = from.top - to.top;
+      if (dx !== 0 || dy !== 0) {
+        p.tokenEl.animate([
+          { transform: `translate(${dx}px, ${dy}px)` },
+          { transform: `translate(${dx / 2}px, ${dy / 2 - 18}px)`, offset: 0.5 },
+          { transform: 'translate(0, 0)' },
+        ], { duration, easing: 'ease-in-out' });
+      }
+    });
   }
 }
 
@@ -1402,9 +1596,10 @@ modalEl.addEventListener('cancel', event => {
   event.preventDefault();
   if (modalCancelValue !== undefined) closeModal(modalCancelValue);
 });
-// Nếu trình duyệt tự đóng hộp thoại (vd. nhấn Esc hai lần), mở lại để không bị kẹt
+// Nếu trình duyệt tự đóng hộp thoại (vd. nhấn Esc hai lần), mở lại để không bị kẹt;
+// kiểm tra modalEl.open để không nuốt sự kiện đóng bất đồng bộ khi vừa mở modal tiếp theo (bảng điểm)
 modalEl.addEventListener('close', () => {
-  if (!modalResolve) return;
+  if (modalEl.open || !modalResolve) return;
   if (modalCancelValue !== undefined) closeModal(modalCancelValue);
   else modalEl.showModal();
 });
@@ -1594,8 +1789,8 @@ function showResult(box, { changes, notes = [], verdict = null, lesson }) {
   box.innerHTML = `
     ${verdictHtml}
     <div class="chips">${chipsFromChanges(changes)}</div>
-    ${notes.map(n => `<p class="note">${n}</p>`).join('')}
-    <p class="lesson"><b>💡 Bài học:</b> ${lesson}</p>
+    ${notes.map(n => `<p class="note">${esc(n)}</p>`).join('')}
+    <p class="lesson"><b>💡 Bài học:</b> ${esc(lesson)}</p>
     <p class="say-why">Hãy nói một câu giải thích vì sao bạn chọn cách này.</p>
     <button type="button" class="btn btn--primary btn--block" data-continue>Tiếp tục</button>`;
   box.hidden = false;
@@ -1607,8 +1802,8 @@ function showResult(box, { changes, notes = [], verdict = null, lesson }) {
 }
 
 function cardHeader(meta, rightText) {
-  const who = state.players.length > 1 ? `<i class="roster__dot" style="--pc:${state.player.color}"></i>${esc(state.player.name)} · ` : '';
-  return `<div class="gcard__head"><span>${meta.icon} ${meta.name}</span><span>${who}${rightText}</span></div>`;
+  const who = state.players.length > 1 ? `<i class="roster__dot" style="--pc:${esc(state.player.color)}"></i>${esc(state.player.name)} · ` : '';
+  return `<div class="gcard__head"><span>${esc(meta.icon)} ${esc(meta.name)}</span><span>${who}${esc(rightText)}</span></div>`;
 }
 
 /* ---------- Thẻ có lựa chọn A / B / C: Mua sắm, Biến cố, An toàn tài chính ---------- */
@@ -1619,8 +1814,8 @@ function playChoiceCard(card, day) {
     <div class="gcard" style="--tcolor: var(${meta.color})">
       ${cardHeader(meta, `Thẻ #${pad2(card.id)}`)}
       <div class="gcard__body">
-        <h2 class="gcard__title">${card.title}</h2>
-        <p class="gcard__text">${card.text}</p>
+        <h2 class="gcard__title">${esc(card.title)}</h2>
+        <p class="gcard__text">${esc(card.text)}</p>
         ${card.type === 'safety' ? `<p class="gcard__hint">Xử lý đúng thẻ này để nhận +${POINTS.safety} điểm an toàn tài chính.</p>` : ''}
         <div class="options"></div>
         <div class="result" hidden></div>
@@ -1631,9 +1826,9 @@ function playChoiceCard(card, day) {
   const buttons = card.options.map(option => {
     const button = html(`
       <button type="button" class="option">
-        <span class="option__key">${option.key}</span>
-        <span class="option__label">${option.label}</span>
-        <span class="option__chips">${chipsFromEffects(option.effects)}${option.warn ? `<span class="chip chip--warn">${option.warn}</span>` : ''}</span>
+        <span class="option__key">${esc(option.key)}</span>
+        <span class="option__label">${esc(option.label)}</span>
+        <span class="option__chips">${chipsFromEffects(option.effects)}${option.warn ? `<span class="chip chip--warn">${esc(option.warn)}</span>` : ''}</span>
       </button>`);
     button.addEventListener('click', () => pick(option, button));
     $('.options', root).append(button);
@@ -1661,6 +1856,7 @@ function playChoiceCard(card, day) {
     state.lastEvent = { type: card.type, day, title: card.title, choice: `${option.key}. ${option.label}`, changes, notes, lesson: card.lesson };
     setMessage(`Ngày ${day}: bạn chọn ${option.key} ở thẻ “${card.title}”.`);
     renderAll();
+    saveGame();
 
     // 5) In ra Bài học
     showResult(resultBox, { changes, notes, verdict, lesson: card.lesson });
@@ -1677,10 +1873,10 @@ function playIncomeCard(card, day) {
     <div class="gcard" style="--tcolor: var(${meta.color})">
       ${cardHeader(meta, `Thẻ #${pad2(card.id)}`)}
       <div class="gcard__body">
-        <h2 class="gcard__title">${card.title}</h2>
-        <p class="gcard__text">${card.text}</p>
+        <h2 class="gcard__title">${esc(card.title)}</h2>
+        <p class="gcard__text">${esc(card.text)}</p>
         <p class="income-amount">Bạn nhận <strong>${signed(card.income)}</strong></p>
-        ${card.hint ? `<p class="gcard__hint">${card.hint}</p>` : ''}
+        ${card.hint ? `<p class="gcard__hint">${esc(card.hint)}</p>` : ''}
         <p class="income-ask">Chia vào 3 quỹ và giải thích: vì sao chia như vậy?</p>
         <div class="splitter-slot"></div>
         <button type="button" class="btn btn--primary btn--block" data-confirm disabled>Xác nhận chia tiền</button>
@@ -1701,6 +1897,7 @@ function playIncomeCard(card, day) {
     state.lastEvent = { type: 'income', day, title: card.title, choice: `Chia ${money(card.income)} vào 3 quỹ`, changes, notes, lesson: card.lesson };
     setMessage(`Ngày ${day}: bạn nhận ${money(card.income)} và chia vào 3 quỹ.`);
     renderAll();
+    saveGame();
 
     showResult($('.result', root), { changes, notes, lesson: card.lesson });
   });
@@ -1724,7 +1921,7 @@ function playGoalCell(day) {
         <p class="gcard__text">Bạn có thể chuyển thêm tiền từ quỹ Sở thích sang quỹ Tiết kiệm. Việc này không bắt buộc.</p>
 
         <div class="goal-box">
-          <div class="goal__top"><span class="goal__title">${goal.icon} ${goal.name}</span><span class="goal__target">cần ${money(goal.target)}</span></div>
+          <div class="goal__top"><span class="goal__title">${esc(goal.icon)} ${esc(goal.name)}</span><span class="goal__target">cần ${money(goal.target)}</span></div>
           <div class="meter meter--goal"><span class="meter__fill" data-fill></span></div>
           <p class="transfer__after" data-after></p>
         </div>
@@ -1787,6 +1984,7 @@ function playGoalCell(day) {
     };
     setMessage(moved > 0 ? `Ngày ${day}: bạn chuyển ${money(moved)} sang quỹ Tiết kiệm.` : `Ngày ${day}: bạn giữ nguyên các quỹ.`);
     renderAll();
+    saveGame();
     closeModal();
   }
 
@@ -1816,10 +2014,12 @@ function confirmRestart() {
    ===================================================================== */
 
 async function startNewGame() {
+  clearSave();
   clearPlayerDom();                                   // dọn DOM sinh động của ván cũ trước khi tạo ván mới
   state = createState(1);                             // state tạm để vẽ bàn cờ trống
   Object.assign(shownFunds, { need: 0, want: 0, save: 0 });
   shownPlayer = null;
+  viewedPlayer = null;
   setMessage('Chọn số người chơi để bắt đầu.');
   renderAll();
 
@@ -1845,15 +2045,27 @@ async function startNewGame() {
   state.current = 0;
   state.phase = 'playing';
   shownPlayer = null;
+  viewedPlayer = null;
   setMessage(count > 1 ? `Lượt của ${state.player.name}: bấm “Tung xúc xắc” hoặc nhấn Space.` : 'Bấm “Tung xúc xắc” để bước sang ngày tiếp theo.');
   renderAll();
+  saveGame();
 }
 
-// Chuyển lượt: bỏ qua người đã về đích (1 người chơi thì giữ nguyên)
+// Chuyển lượt: bỏ qua người đã về đích (có guard counter chống vòng lặp vô tận)
 function nextTurn() {
+  viewedPlayer = null;
   const n = state.players.length;
-  if (n === 1) return;
-  do { state.current = (state.current + 1) % n; } while (state.player.done);
+  if (n <= 1) return;
+  let guard = 0;
+  do {
+    state.current = (state.current + 1) % n;
+    guard += 1;
+  } while (state.player.done && guard <= n);
+
+  if (state.players.every(p => p.done)) {
+    finishGame();
+    return;
+  }
   setMessage(`Tới lượt ${state.player.name}: bấm “Tung xúc xắc” hoặc nhấn Space.`);
   renderAll();
 }
@@ -1869,6 +2081,7 @@ async function rollDice() {
   const value = randomInt(1, 6);
   dieEl.classList.remove('is-rolling');
   state.lastRoll = value;
+  saveGame();
   return value;
 }
 
@@ -1880,6 +2093,55 @@ async function moveToken(steps) {
     renderBoard();
     await sleep(300);
   }
+  saveGame();
+}
+
+/**
+ * Hàm thuần tìm danh sách người chơi bị đá khi `mover` vừa di chuyển tới `mover.position`.
+ * Ngoại lệ:
+ *  - Không đá ở ô xuất phát (pos === 0) hoặc ô về đích (pos >= LAST_INDEX).
+ *  - Không đá tại các ô An toàn tài chính (BOARD[pos].type === 'safety' - Vùng an toàn).
+ *  - Không đá người chơi đã hoàn thành hành trình (p.done === true).
+ */
+function findCaptured(players, mover) {
+  if (!Array.isArray(players) || players.length < 2 || !mover) return [];
+  const pos = mover.position;
+  if (!Number.isInteger(pos) || pos <= 0 || pos >= LAST_INDEX) return [];
+  const cell = BOARD[pos];
+  if (!cell || cell.type === 'start' || cell.type === 'safety') return [];
+  return players.filter(p => p !== mover && !p.done && p.position === pos);
+}
+
+// Kiểm tra và đá quân cờ khác đang đứng cùng ô đích về lại Ngày 1 (position = 0)
+async function checkCapture() {
+  const victims = findCaptured(state.players, state.player);
+  if (victims.length === 0) return;
+
+  const day = state.position + 1;
+  for (const victim of victims) {
+    // 1. Đưa vị trí của người bị đá về ô xuất phát (Ngày 1)
+    victim.position = 0;
+
+    // 2. Ghi nhật ký cho cả người đá và người bị đá
+    const msg = `💥 ${state.player.name} đã đá ${victim.name} từ Ngày ${day} về Ngày 1!`;
+    addLog({ title: msg });
+    victim.log.unshift({
+      day,
+      title: `💥 Bị ${state.player.name} đá về Ngày 1!`,
+      changes: [],
+      notes: ['Quay lại vạch xuất phát (Ngày 1).'],
+    });
+
+    // 3. Hiển thị thông báo lên bàn cờ
+    setMessage(msg);
+  }
+
+  // 4. Cập nhật vị trí trên bàn cờ kèm hiệu ứng FLIP cho tất cả quân cờ bị đổi chỗ (600ms)
+  placeToken(true, 600);
+  renderAll();
+  saveGame();
+  // Tạm dừng một nhịp để người chơi kịp nhìn hiệu ứng đá quân và đọc thông báo trước khi mở thẻ
+  await sleep(900);
 }
 
 // Xử lý ô quân cờ vừa đứng vào
@@ -1894,19 +2156,23 @@ async function resolveCell() {
     state.lastEvent = { type: 'cost', day, title: 'Chi phí cần thiết', text: `Trả ${money(cell.amount)} từ quỹ Nhu cầu.`, changes, notes };
     setMessage(`Ngày ${day}: trả ${money(cell.amount)} chi phí cần thiết từ quỹ Nhu cầu.`);
     renderAll();
+    saveGame();
   } else if (cell.type === 'goal') {
     setMessage(`Ngày ${day}: ô Mục tiêu tiết kiệm.`);
     renderAll();
     await playGoalCell(day);
+    saveGame();
   } else if (cell.type === 'income') {
     setMessage(`Ngày ${day}: ô Thu nhập. Rút thẻ!`);
     renderAll();
     await playIncomeCard(drawCard('income'), day);
+    saveGame();
   } else {
     // shopping, incident, safety: rút một thẻ cùng loại
     setMessage(`Ngày ${day}: ${CELL_TYPES[cell.type].name}. Rút thẻ!`);
     renderAll();
     await playChoiceCard(drawCard(cell.type), day);
+    saveGame();
   }
 }
 
@@ -1919,6 +2185,7 @@ async function handleRoll() {
   if (state.phase === 'finished') { showScoreAndMaybeRestart(); return; }
   if (state.phase !== 'playing' || state.busy) return;
 
+  viewedPlayer = null;
   setBusy(true);
   const roll = await rollDice();
   const steps = Math.min(roll, LAST_INDEX - state.position);      // không đi quá Ngày 30
@@ -1928,11 +2195,28 @@ async function handleRoll() {
   renderAll();
 
   await moveToken(steps);
+  await checkCapture();
   await resolveCell();
 
-  if (state.position === LAST_INDEX) state.player.done = true;
-  if (state.players.every(p => p.done)) await finishGame();
-  else nextTurn();
+  if (state.position === LAST_INDEX && !state.player.done) {
+    state.player.done = true;
+    addLog({
+      title: `🏁 Hoàn thành hành trình ${TOTAL_DAYS} ngày!`,
+      notes: ['Đã về đích an toàn và chờ tổng kết điểm.'],
+    });
+    if (state.players.length > 1 && !state.players.every(p => p.done)) {
+      setMessage(`🎉 Chúc mừng ${state.player.name} đã cán đích Ngày ${TOTAL_DAYS}! Chuyển lượt cho người chơi tiếp theo.`);
+      renderAll();
+      await sleep(1100);
+    }
+  }
+
+  if (state.players.every(p => p.done)) {
+    await finishGame();
+  } else {
+    nextTurn();
+    saveGame();
+  }
   setBusy(false);
 }
 
@@ -1992,8 +2276,8 @@ function showScoreModal() {
       <ul class="score-rows">
         ${score.rows.map(row => `
           <li class="score-row ${row.points > 0 ? 'is-earned' : 'is-missed'}">
-            <span class="score-row__icon" aria-hidden="true">${row.icon}</span>
-            <div><b>${row.label}</b><small>${row.detail}</small></div>
+            <span class="score-row__icon" aria-hidden="true">${esc(row.icon)}</span>
+            <div><b>${esc(row.label)}</b><small>${esc(row.detail)}</small></div>
             <span class="score-row__pts">${row.points > 0 ? '+' : ''}${row.points}</span>
           </li>`).join('')}
       </ul>
@@ -2024,15 +2308,130 @@ async function finishGame() {
   state.phase = 'finished';
   setMessage(`Bạn đã đến Ngày ${TOTAL_DAYS}. Xem bảng điểm nào!`);
   renderAll();
+  saveGame();
   await showScoreAndMaybeRestart();
 }
 
 
 /* =====================================================================
-   PHẦN 8b. NHIỀU NGƯỜI CHƠI · PHÍM TẮT · NHÌN TRỘM · DỌN DẸP DOM
+   PHẦN 8b. NHIỀU NGƯỜI CHƠI · LƯU VÁN CHƠI (DEEP VALIDATION) · PHÍM TẮT · NHÌN TRỘM
    ===================================================================== */
 
-const esc = text => String(text).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const SAVE_KEY = 'money_mission_save';
+const SAVE_VERSION = 2;
+const DEFAULT_TOPBAR_NOTE = 'Trò chơi quản lý tiền cho tuổi teen. Tiền trong trò chơi chỉ là tiền mô phỏng.';
+let storageWarnTimer = null;
+let storageToastEl = null;
+
+function showStorageWarning(msg = '⚠️ Không thể lưu ván chơi (trình duyệt chặn hoặc đầy bộ nhớ)') {
+  const noteEl = $('#topbarNote') || $('.topbar__note');
+  if (noteEl) {
+    noteEl.textContent = msg;
+    noteEl.classList.add('topbar__note--warn');
+  }
+  if (!storageToastEl) {
+    storageToastEl = html(`<div class="toast" role="status" aria-live="polite"></div>`);
+    document.body.append(storageToastEl);
+  }
+  storageToastEl.textContent = msg;
+  storageToastEl.hidden = false;
+
+  clearTimeout(storageWarnTimer);
+  storageWarnTimer = setTimeout(() => {
+    if (storageToastEl) storageToastEl.hidden = true;
+    if (noteEl) {
+      noteEl.textContent = DEFAULT_TOPBAR_NOTE;
+      noteEl.classList.remove('topbar__note--warn');
+    }
+  }, 5500);
+}
+
+function saveGame() {
+  if (state.phase !== 'playing' && state.phase !== 'finished') return;
+  try {
+    const data = {
+      version: SAVE_VERSION,
+      phase: state.phase,
+      message: state.message,
+      drawnCardIds: [...state.drawnCardIds],
+      current: state.current,
+      players: state.players.map(({ tokenEl, ...rest }) => rest),
+    };
+    localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+  } catch (_) {
+    showStorageWarning('⚠️ Không thể lưu ván chơi (trình duyệt chặn hoặc đầy bộ nhớ)');
+  }
+}
+
+function clearSave() {
+  try { localStorage.removeItem(SAVE_KEY); } catch (_) {}
+}
+
+// Kiểm tra tính hợp lệ sâu (Deep Validation) của dữ liệu lưu trong localStorage
+function isValidSavedData(data) {
+  if (!data || typeof data !== 'object') return false;
+  if (data.version !== SAVE_VERSION) return false;
+  if (data.phase !== 'playing' && data.phase !== 'finished') return false;
+  if (!Array.isArray(data.players) || data.players.length < 1 || data.players.length > MAX_PLAYERS) return false;
+  if (!Number.isInteger(data.current) || data.current < 0 || data.current >= data.players.length) return false;
+
+  for (const p of data.players) {
+    if (!p || typeof p !== 'object') return false;
+    if (typeof p.name !== 'string' || p.name.trim().length === 0) return false;
+    if (!p.funds || typeof p.funds !== 'object') return false;
+    if (!FUND_IDS.every(id => typeof p.funds[id] === 'number' && Number.isFinite(p.funds[id]))) return false;
+    if (!Number.isInteger(p.position) || p.position < 0 || p.position > LAST_INDEX) return false;
+    if (!p.goal || typeof p.goal !== 'object' || typeof p.goal.name !== 'string' || !p.goal.name.trim() ||
+        typeof p.goal.target !== 'number' || !Number.isFinite(p.goal.target) || p.goal.target <= 0) {
+      return false;
+    }
+    if (!Array.isArray(p.log)) return false;
+  }
+  return true;
+}
+
+function loadGame() {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return false;
+    const data = JSON.parse(raw);
+    if (!isValidSavedData(data)) {
+      clearSave();
+      return false;
+    }
+    clearPlayerDom();
+    state = createState(data.players.length);
+    state.phase = data.phase;
+    state.busy = false;
+    state.message = typeof data.message === 'string' ? data.message : '';
+    state.drawnCardIds = new Set(
+      Array.isArray(data.drawnCardIds) ? data.drawnCardIds.filter(id => Number.isInteger(id)) : []
+    );
+    state.current = clamp(data.current, 0, data.players.length - 1);
+    state.players = data.players.map((p, i) => ({
+      ...createPlayer(i),
+      ...p,
+      color: PLAYER_COLORS[i], // luôn ép màu chuẩn theo vị trí để tránh CSS injection hoặc lệch màu
+      done: Boolean(p.done || p.position === LAST_INDEX),
+      safetyCorrect: Number.isInteger(p.safetyCorrect) && p.safetyCorrect >= 0 ? p.safetyCorrect : 0,
+      safetyTotal: Number.isInteger(p.safetyTotal) && p.safetyTotal >= 0 ? p.safetyTotal : 0,
+      tokenEl: null,
+    }));
+    // Nếu đang ở phase playing mà người hiện tại đã done nhưng vẫn còn người chưa done, chuyển tới người hợp lệ
+    if (state.phase === 'playing' && state.player.done && !state.players.every(p => p.done)) {
+      nextTurn();
+    }
+    state.players.forEach(buildToken);
+    viewedPlayer = null;
+    shownPlayer = state.player;
+    Object.assign(shownFunds, state.funds);
+    renderAll();
+    return true;
+  } catch (_) {
+    clearSave();
+    return false;
+  }
+}
 
 function buildToken(p) {
   p.tokenEl = html(`
@@ -2061,17 +2460,43 @@ function layoutTokens() {
   });
 }
 
-// Bảng tóm tắt tiền của mọi người (chỉ hiện khi có từ 2 người chơi)
+// Bảng tóm tắt tiền của mọi người (chỉ hiện khi có từ 2 người chơi; hỗ trợ cả chuột và bàn phím)
 function renderRoster() {
   const box = $('#roster');
+  const activeView = viewedPlayer || state.player;
   box.hidden = state.players.length < 2;
-  box.innerHTML = state.players.length < 2 ? '' : state.players.map(p => {
+  box.innerHTML = state.players.length < 2 ? '' : state.players.map((p, idx) => {
     const total = p.funds.need + p.funds.want + p.funds.save;
-    return `<li class="roster__item${p === state.player ? ' is-current' : ''}${p.done ? ' is-done' : ''}" style="--pc:${p.color}">
+    const isViewed = p === activeView;
+    const cls = [
+      'roster__item',
+      p === state.player ? 'is-current' : '',
+      isViewed ? 'is-viewed' : '',
+      p.done ? 'is-done' : '',
+    ].filter(Boolean).join(' ');
+    return `<li class="${cls}" tabindex="0" role="button" aria-pressed="${isViewed}" data-player-idx="${idx}" style="--pc:${p.color}" title="Bấm để xem ngân sách và nhật ký của ${esc(p.name)}">
       <i class="roster__dot"></i><span class="roster__name">${esc(p.name)}</span>
       <span class="roster__day">${p.done ? 'Về đích' : `Ngày ${p.position + 1}`}</span>
       <b class="${total < 0 ? 'is-negative' : ''}">${money(total)}</b></li>`;
   }).join('');
+
+  const selectPlayer = item => {
+    const p = state.players[Number(item.dataset.playerIdx)];
+    viewedPlayer = p === state.player ? null : p;
+    renderBudget();
+    renderLog();
+    renderLastEvent();
+  };
+
+  $$('.roster__item', box).forEach(item => {
+    item.addEventListener('click', () => selectPlayer(item));
+    item.addEventListener('keydown', event => {
+      if (event.code === 'Space' || event.key === 'Enter') {
+        event.preventDefault();
+        selectPlayer(item);
+      }
+    });
+  });
 }
 
 // Chữ "+50.000₫" / "−20.000₫" bay lên rồi mờ dần; tự gỡ khỏi DOM khi xong
@@ -2123,22 +2548,39 @@ function showPlayerCountModal() {
 }
 
 function showRankingModal() {
+  // Xếp hạng thuần theo điểm số (không dùng tổng tiền mặt còn lại để phân định thắng thua)
   const rows = state.players.map(p => ({ p, ...calculateScore(p) }))
-    .sort((a, b) => b.totalPoints - a.totalPoints || b.total - a.total);
+    .sort((a, b) => b.totalPoints - a.totalPoints);
+  const topPoints = rows[0].totalPoints;
+  const coWinners = rows.filter(r => r.totalPoints === topPoints);
+  const rankBanner = coWinners.length > 1
+    ? `🏆 ĐỒNG HẠNG NHẤT: ${coWinners.map(r => esc(r.p.name)).join(', ')} (${topPoints} điểm)`
+    : `🏆 ${esc(rows[0].p.name)} dẫn đầu với ${topPoints} điểm`;
+
   const medals = ['🥇', '🥈', '🥉'];
+  let currentRank = 0;
+  let lastPts = null;
+
   const root = html(`
     <div class="score">
       <div class="score__head">
         <h2>Cả nhóm đã đi hết ${TOTAL_DAYS} ngày!</h2>
-        <p class="score__rank">🏆 ${esc(rows[0].p.name)} dẫn đầu với ${rows[0].totalPoints} điểm</p>
+        <p class="score__rank">${rankBanner}</p>
       </div>
       <ul class="score-rows">
-        ${rows.map((r, i) => `
-          <li class="score-row ${i === 0 ? 'is-earned' : ''}" style="--pc:${r.p.color}">
-            <span class="score-row__icon" aria-hidden="true">${medals[i] || i + 1}</span>
+        ${rows.map((r, i) => {
+          if (r.totalPoints !== lastPts) {
+            currentRank = i;
+            lastPts = r.totalPoints;
+          }
+          const isWinner = r.totalPoints === topPoints;
+          return `
+          <li class="score-row ${isWinner ? 'is-earned' : ''}" style="--pc:${r.p.color}">
+            <span class="score-row__icon" aria-hidden="true">${medals[currentRank] || currentRank + 1}</span>
             <div><b><i class="roster__dot"></i>${esc(r.p.name)}</b><small>${r.rows.map(x => x.icon + (x.points > 0 ? '✓' : '✗')).join(' ')} · còn ${money(r.total)}</small></div>
             <span class="score-row__pts">${r.totalPoints}</span>
-          </li>`).join('')}
+          </li>`;
+        }).join('')}
       </ul>
       <p class="callout">Người thắng không phải là người giữ nhiều tiền nhất, mà là người có nhiều điểm nhất.</p>
       <div class="actions">
@@ -2168,30 +2610,277 @@ document.addEventListener('keydown', event => {
 
   if (key === 'P' && modalEl.open && peekBtn.isConnected) { setPeek(true); return; }
 
-  if (modalEl.open) {                                        // A/B/C chọn thẻ · 1–8 chọn số người chơi
+  if (modalEl.open) {                                        // A/B/C/D chọn thẻ hoặc chia tiền · Space/Enter tiếp tục · 1–8 chọn số người chơi
+    if (!event.repeat && (event.code === 'Space' || event.key === 'Enter')) {
+      const continueBtn = $('[data-continue]:not(:disabled)', modalBody);
+      if (continueBtn) {
+        event.preventDefault();
+        continueBtn.click();
+        return;
+      }
+    }
     let target = null;
     if (!event.repeat && ['A', 'B', 'C'].includes(key)) {
       target = $$('.option:not(:disabled)', modalBody).find(b => $('.option__key', b).textContent.trim() === key);
-    } else if (!event.repeat && /^[1-8]$/.test(key)) {
+    }
+    if (!target && !event.repeat && ['A', 'B', 'C', 'D'].includes(key)) {
+      target = $$('.plan:not(:disabled)', modalBody).find(b => $('b', b)?.textContent.trim() === key);
+    }
+    if (!target && !event.repeat && /^[1-8]$/.test(key)) {
       target = $$('.count-picks .goal-tile', modalBody)[Number(key) - 1];
     }
     if (target) { event.preventDefault(); target.click(); }
     return;
   }
-  if (event.code === 'Space') {                              // Space tung xúc xắc
+  if (event.code === 'Space' && (el === document.body || el === rollBtn)) {   // Space tung xúc xắc (chỉ khi focus ở body hoặc nút Tung xúc xắc)
     event.preventDefault();
     if (!event.repeat && !rollBtn.disabled) rollBtn.click();
   }
 });
 document.addEventListener('keyup', event => {
   if (event.key.toUpperCase() === 'P') setPeek(false);
-  if (event.code === 'Space' && !modalEl.open) event.preventDefault();   // tránh nút đang focus bị "click" thêm lần nữa
+  if (event.code === 'Space' && !modalEl.open && (event.target === document.body || event.target === rollBtn)) {
+    event.preventDefault();   // tránh nút rollBtn bị kích hoạt kép
+  }
 });
+
+
+/* =====================================================================
+   PHẦN 8c. BỘ KIỂM THỬ TỰ ĐỘNG (CHẠY QUA window.runMoneyMissionTests())
+   ===================================================================== */
+
+function runMoneyMissionTests() {
+  const prevState = state;
+  const prevShownPlayer = shownPlayer;
+  const prevShownFunds = { ...shownFunds };
+  const results = [];
+
+  function assert(name, condition, detail = '') {
+    results.push({ Test: name, Status: condition ? '✅ PASS' : '❌ FAIL', Detail: detail });
+  }
+
+  try {
+    // 1. Chia tiền bảo toàn 100%
+    const amounts = [START_BUDGET, 250000, 200000, 150000, 120000, 100000];
+    const splitOk = BUDGET_PLANS.every(plan =>
+      amounts.every(total => {
+        const s = splitByRatio(total, plan.ratio);
+        return s.need + s.want + s.save === total && s.need >= 0 && s.want >= 0 && s.save >= 0;
+      })
+    );
+    assert(
+      '1. Chia tiền bảo toàn 100%',
+      splitOk,
+      'Mọi phương án A/B/C đều có tổng need + want + save === total'
+    );
+
+    // 2. Chi tiêu khi quỹ đủ tiền
+    state = createState(1);
+    state.funds = { need: 500000, want: 200000, save: 300000 };
+    const r2 = applyEffects({ need: -80000 });
+    assert(
+      '2. Chi tiêu đủ tiền',
+      state.funds.need === 420000 && state.funds.want === 200000 && state.funds.save === 300000 && r2.notes.length === 0,
+      `need=${state.funds.need}, want=${state.funds.want}, save=${state.funds.save}`
+    );
+
+    // 3. Bù trừ liên quỹ đúng thứ tự FALLBACK_ORDER
+    state = createState(1);
+    state.funds = { need: 30000, want: 50000, save: 200000 };
+    const r3 = applyEffects({ need: -100000 });
+    assert(
+      '3. Bù trừ liên quỹ đúng thứ tự',
+      state.funds.need === 0 && state.funds.want === 0 && state.funds.save === 180000 && r3.notes.length === 2,
+      `need=${state.funds.need}, want=${state.funds.want}, save=${state.funds.save}`
+    );
+
+    // 4. Ghi âm khi cả 3 quỹ cạn kiệt
+    state = createState(1);
+    state.funds = { need: 20000, want: 10000, save: 0 };
+    const r4 = applyEffects({ need: -50000 });
+    assert(
+      '4. Ghi âm khi cả 3 quỹ cạn',
+      state.funds.need === -20000 && state.funds.want === 0 && state.funds.save === 0 &&
+        r4.notes.some(n => n.includes('Khoản thiếu hụt do không vay tiền')),
+      `need=${state.funds.need}, note="${r4.notes[r4.notes.length - 1] || ''}"`
+    );
+
+    // 5. Chuyển tiền nội bộ không rút nhầm quỹ thứ ba
+    state = createState(1);
+    state.funds = { need: 500000, want: 20000, save: 100000 };
+    applyEffects({ want: -50000, save: 50000 });
+    const partialOk = state.funds.need === 500000 && state.funds.want === 0 && state.funds.save === 120000;
+    applyEffects({ want: -50000, save: 50000 }); // khi want đã bằng 0
+    const zeroOk = state.funds.need === 500000 && state.funds.want === 0 && state.funds.save === 120000;
+    assert(
+      '5. Chuyển quỹ nội bộ không rút nhầm quỹ',
+      partialOk && zeroOk,
+      `need=${state.funds.need} (giữ nguyên), want=${state.funds.want}, save=${state.funds.save}`
+    );
+
+    // 6. Tính đúng điểm xếp hạng
+    state = createState(1);
+    state.goal = GOALS[0]; // target 400.000
+    state.funds = { need: 100000, want: 50000, save: 420000 };
+    state.safetyTotal = 3;
+    state.safetyCorrect = 2;
+    const sc = calculateScore(state);
+    const rk = getRank(sc.totalPoints);
+    assert(
+      '6. Tính đúng điểm xếp hạng',
+      sc.totalPoints === 14 && rk.title === 'Siêu sao quản lý tiền',
+      `totalPoints=${sc.totalPoints}, rank="${rk.title}"`
+    );
+
+    // 7. Hàm findCaptured nhận diện đúng nạn nhân và bảo vệ vùng an toàn (ô safety, ô start, người đã done)
+    const p1 = { name: 'P1', position: 2, done: false }; // Ngày 3: shopping (bị đá)
+    const p2 = { name: 'P2', position: 2, done: false }; // mover tại Ngày 3
+    const p3 = { name: 'P3', position: 4, done: false }; // Ngày 5: safety (vùng an toàn)
+    const p4 = { name: 'P4', position: 4, done: false }; // mover tại Ngày 5
+    const p5 = { name: 'P5', position: 0, done: false }; // Ngày 1: start (không đá)
+    const p6 = { name: 'P6', position: 0, done: false };
+    const capNormal = findCaptured([p1, p2], p2);
+    const capSafe   = findCaptured([p3, p4], p4);
+    const capStart  = findCaptured([p5, p6], p6);
+    assert(
+      '7. Đá quân & Vùng an toàn (findCaptured)',
+      capNormal.length === 1 && capNormal[0] === p1 && capSafe.length === 0 && capStart.length === 0,
+      `ô thường=${capNormal.length}, ô safety=${capSafe.length}, ô start=${capStart.length}`
+    );
+
+    // 8. Rút thẻ ngẫu nhiên (drawCard) đủ chu kỳ không trùng ID cho đến khi hết bộ
+    state = createState(1);
+    const shoppingTotal = CARDS.filter(c => c.type === 'shopping').length;
+    const drawnCycle = new Set();
+    for (let i = 0; i < shoppingTotal; i++) {
+      drawnCycle.add(drawCard('shopping').id);
+    }
+    const nextCard = drawCard('shopping');
+    assert(
+      '8. Chu kỳ rút thẻ không trùng lặp (drawCard)',
+      drawnCycle.size === shoppingTotal && Boolean(nextCard && nextCard.id),
+      `unique=${drawnCycle.size}/${shoppingTotal}, thẻ chu kỳ mới=#${nextCard?.id}`
+    );
+
+    // 9. Xác thực sâu isValidSavedData từ chối dữ liệu hỏng (NaN, thiếu goal, số người chơi sai, sai version)
+    const validSample = {
+      version: SAVE_VERSION,
+      phase: 'playing',
+      current: 0,
+      players: [{
+        name: 'A',
+        funds: { need: 500000, want: 200000, save: 300000 },
+        position: 5,
+        goal: GOALS[0],
+        log: [],
+      }],
+    };
+    const badNaN = JSON.parse(JSON.stringify(validSample));
+    badNaN.players[0].funds.need = NaN;
+    const badGoal = JSON.parse(JSON.stringify(validSample));
+    badGoal.players[0].goal = { name: '', target: -10 };
+    const badCount = { ...validSample, players: Array.from({ length: 9 }, () => validSample.players[0]) };
+    const badPos = JSON.parse(JSON.stringify(validSample));
+    badPos.players[0].position = 99;
+    assert(
+      '9. Xác thực sâu dữ liệu lưu (isValidSavedData)',
+      isValidSavedData(validSample) === true &&
+        isValidSavedData(badNaN) === false &&
+        isValidSavedData(badGoal) === false &&
+        isValidSavedData(badCount) === false &&
+        isValidSavedData(badPos) === false,
+      'Chấp nhận dữ liệu chuẩn và từ chối NaN / thiếu goal / >8 người / sai vị trí'
+    );
+
+    // 10. Cân bằng Thẻ #14 (Món đồ bị lỗi) và Mục tiêu tiết kiệm mới
+    const card14 = CARDS.find(c => c.id === 14);
+    const optA = card14?.options.find(o => o.key === 'A')?.effects;
+    const optB = card14?.options.find(o => o.key === 'B')?.effects;
+    const optC = card14?.options.find(o => o.key === 'C')?.effects;
+    const goalsBalanced = GOALS.every(g => g.target >= 300000);
+    assert(
+      '10. Cân bằng Thẻ #14 & Mục tiêu tiết kiệm',
+      optA?.want === -100000 && Object.keys(optB || {}).length === 0 && optC?.want === -200000 && goalsBalanced,
+      `Thẻ #14: A=${optA?.want}, B=0, C=${optC?.want}; minGoal=${Math.min(...GOALS.map(g => g.target))}`
+    );
+
+    // 11. Xác thực phiên bản bắt buộc (SAVE_VERSION) trong isValidSavedData
+    const missingVersion = JSON.parse(JSON.stringify(validSample));
+    delete missingVersion.version;
+    const wrongVersion = { ...validSample, version: SAVE_VERSION - 1 };
+    assert(
+      '11. Bắt buộc khớp SAVE_VERSION (isValidSavedData)',
+      isValidSavedData(missingVersion) === false && isValidSavedData(wrongVersion) === false && isValidSavedData(validSample) === true,
+      `missingVersion=${isValidSavedData(missingVersion)}, wrongVersion=${isValidSavedData(wrongVersion)}`
+    );
+
+    // 12. Chống crash khi localStorage.setItem ném lỗi trong saveGame()
+    state = createState(1);
+    state.phase = 'playing';
+    const origProtoSetItem = Storage.prototype.setItem;
+    let saveDidNotThrow = false;
+    try {
+      Storage.prototype.setItem = function () {
+        throw new Error('QuotaExceededError: Simulated storage error');
+      };
+      saveGame();
+      saveDidNotThrow = true;
+    } catch (_) {
+      saveDidNotThrow = false;
+    } finally {
+      Storage.prototype.setItem = origProtoSetItem;
+      clearTimeout(storageWarnTimer);
+      if (storageToastEl) storageToastEl.hidden = true;
+      const noteEl = $('#topbarNote') || $('.topbar__note');
+      if (noteEl) {
+        noteEl.textContent = DEFAULT_TOPBAR_NOTE;
+        noteEl.classList.remove('topbar__note--warn');
+      }
+    }
+    assert(
+      '12. Bắt lỗi localStorage.setItem an toàn (saveGame)',
+      saveDidNotThrow === true,
+      'saveGame() không crash và hiển thị cảnh báo khi localStorage bị chặn hoặc đầy bộ nhớ'
+    );
+  } finally {
+    state = prevState;
+    shownPlayer = prevShownPlayer;
+    Object.assign(shownFunds, prevShownFunds);
+    renderAll();
+  }
+
+  const passed = results.filter(r => r.Status.startsWith('✅')).length;
+  console.table(results);
+  return { passed, total: results.length, allPassed: passed === results.length, results };
+}
+window.runMoneyMissionTests = runMoneyMissionTests;
 
 
 /* =====================================================================
    PHẦN 9. KHỞI ĐỘNG
    ===================================================================== */
+
+// Kiểm tra mọi loại ô cần rút thẻ trên BOARD đều có ít nhất 1 thẻ bài tương ứng trong CARDS
+function validateDeck() {
+  const nonCardTypes = new Set(['start', 'goal', 'cost']);
+  const requiredTypes = new Set(
+    BOARD.map(cell => cell.type).filter(type => !nonCardTypes.has(type))
+  );
+  const missingTypes = [];
+  for (const type of requiredTypes) {
+    const count = CARDS.filter(card => card.type === type).length;
+    if (count === 0) {
+      missingTypes.push(type);
+      console.warn(`[Money Mission] Cảnh báo bộ bài: Loại ô "${type}" trên BOARD không có thẻ bài nào trong CARDS!`);
+    }
+  }
+  return missingTypes.length === 0;
+}
+
+setMotionEnabled(!reduceMotion, false);
+$('#motionBtn').addEventListener('click', () => {
+  setMotionEnabled(reduceMotion, true);
+});
 
 rollBtn.addEventListener('click', handleRoll);
 restartBtn.addEventListener('click', async () => {
@@ -2200,13 +2889,15 @@ restartBtn.addEventListener('click', async () => {
     const sure = await confirmRestart();
     if (!sure) return;
   }
+  clearSave();
   startNewGame();
 });
 
+validateDeck();
 buildBoard();
 buildLegend();
 buildFundBlocks();
-startNewGame();
+if (!loadGame()) startNewGame();
 </script>
 </body>
 </html>
