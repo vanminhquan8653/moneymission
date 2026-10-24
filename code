@@ -360,8 +360,8 @@ button { font: inherit; color: inherit; }
 .die.is-rolling { animation: shake .36s linear infinite; }
 @media (min-width: 700px) {
   .die.is-rolling {
+    animation: shake-desktop .34s linear infinite;
     box-shadow: 0 8px 0 var(--shadow), 0 0 0 4px var(--t-goal);
-    scale: 1.06;
   }
 }
 .dice-info__day { font: 800 24px/1.1 var(--font-display); }
@@ -392,7 +392,7 @@ button { font: inherit; color: inherit; }
 }
 .modal::backdrop { background: rgba(14, 10, 48, .68); backdrop-filter: blur(3px); }
 .modal[open] { animation: pop-in .24s cubic-bezier(.2, 1.15, .4, 1); }
-#modalBody { outline: none; }
+#modalBody { outline: none; overflow-y: auto; max-height: calc(100vh - 30px); max-height: calc(100dvh - 30px); -webkit-overflow-scrolling: touch; }
 
 /* Thẻ bài */
 .gcard__head {
@@ -517,6 +517,13 @@ button { font: inherit; color: inherit; }
    --------------------------------------------------------------------- */
 @keyframes pop-in   { from { opacity: 0; transform: translateY(14px) scale(.96); } to { opacity: 1; transform: none; } }
 @keyframes shake    { 0% { transform: rotate(-9deg); } 25% { transform: rotate(8deg) translateY(-7px); } 50% { transform: rotate(-7deg); } 75% { transform: rotate(9deg) translateY(-5px); } 100% { transform: rotate(-9deg); } }
+@keyframes shake-desktop {
+  0%   { transform: rotate(-14deg) translateY(0) scale(1.06); }
+  25%  { transform: rotate(16deg) translateY(-8px) scale(1.09); }
+  50%  { transform: rotate(-12deg) translateY(2px) scale(1.05); }
+  75%  { transform: rotate(15deg) translateY(-6px) scale(1.09); }
+  100% { transform: rotate(-14deg) translateY(0) scale(1.06); }
+}
 @keyframes flash-up   { 0% { background: var(--pos-bg); box-shadow: 0 0 0 3px var(--pos-fg); } 100% { background: var(--paper-2); box-shadow: 0 0 0 0 transparent; } }
 @keyframes flash-down { 0% { background: var(--neg-bg); box-shadow: 0 0 0 3px var(--neg-fg); } 100% { background: var(--paper-2); box-shadow: 0 0 0 0 transparent; } }
 
@@ -1065,9 +1072,13 @@ function createPlayer(i) {
   };
 }
 
+const VALID_TURN_STEPS = ['idle', 'rolling', 'moving', 'resolving', 'viewing_result'];
+
 function createState(playerCount = 1) {
   const s = {
     phase: 'setup',            // 'setup' → 'playing' → 'finished'
+    turnStep: 'idle',          // 'idle' → 'rolling' → 'moving' → 'resolving'
+    activeCardId: null,        // ID thẻ bài đang mở khi turnStep === 'resolving'
     busy: false,               // true khi đang tung / di chuyển / xử lý thẻ → khóa nút xúc xắc
     message: '',
     drawnCardIds: new Set(),   // thẻ đã rút: bộ bài dùng chung cho mọi người chơi
@@ -1310,8 +1321,14 @@ function drawCard(type) {
   return card;
 }
 
+const MAX_NAME_LENGTH = 20;
+const MAX_LOG_ENTRIES = 100;
+
 function addLog({ title, changes = [], notes = [] }) {
   state.log.unshift({ day: state.position + 1, title, changes, notes });
+  if (state.log.length > MAX_LOG_ENTRIES) {
+    state.log.length = MAX_LOG_ENTRIES;
+  }
 }
 
 
@@ -1550,9 +1567,9 @@ function placeToken(animate, duration = 280) {
       const dy = from.top - to.top;
       if (dx !== 0 || dy !== 0) {
         p.tokenEl.animate([
-          { transform: `translate(${dx}px, ${dy}px)` },
-          { transform: `translate(${dx / 2}px, ${dy / 2 - 18}px)`, offset: 0.5 },
-          { transform: 'translate(0, 0)' },
+          { transform: `translate(${dx}px, ${dy}px) scale(1)` },
+          { transform: `translate(${dx / 2}px, ${dy / 2 - 18}px) scale(1.15)`, offset: 0.5 },
+          { transform: 'translate(0, 0) scale(1)' },
         ], { duration, easing: 'ease-in-out' });
       }
     });
@@ -1589,6 +1606,13 @@ function closeModal(value) {
   const resolve = modalResolve;
   modalResolve = null;
   if (resolve) resolve(value);
+  // Trả tiêu điểm bàn phím (Focus Return) về nút Tung xúc xắc (hoặc Chơi lại) để người dùng không bị lạc khi nhấn Tab
+  if (!modalEl.open) {
+    const focusTarget = (typeof rollBtn !== 'undefined' && rollBtn && !rollBtn.disabled)
+      ? rollBtn
+      : (typeof restartBtn !== 'undefined' ? restartBtn : null);
+    focusTarget?.focus?.({ preventScroll: true });
+  }
 }
 
 // Không cho Esc bỏ qua một quyết định giữa chừng
@@ -1770,7 +1794,9 @@ function showSetupModal() {
 
   startBtn.addEventListener('click', () => {
     const nameInput = $('[data-name]', root);
-    if (nameInput && nameInput.value.trim()) player.name = nameInput.value.trim();
+    if (nameInput && nameInput.value.trim()) {
+      player.name = nameInput.value.trim().slice(0, MAX_NAME_LENGTH);
+    }
     state.funds = { ...splitter.values };
     state.goal = chosenGoal;
     closeModal();
@@ -1851,12 +1877,13 @@ function playChoiceCard(card, day) {
       verdict = option.correct ? 'good' : 'bad';
     }
 
-    // 4) Ghi nhật ký, cập nhật cột phải và bảng ngân sách
+    // 4) Ghi nhật ký, cập nhật cột phải, đánh dấu đã áp dụng hiệu ứng (viewing_result) và lưu ngay
     addLog({ title: `Thẻ #${pad2(card.id)} ${card.title}: chọn ${option.key}`, changes, notes });
     state.lastEvent = { type: card.type, day, title: card.title, choice: `${option.key}. ${option.label}`, changes, notes, lesson: card.lesson };
     setMessage(`Ngày ${day}: bạn chọn ${option.key} ở thẻ “${card.title}”.`);
-    renderAll();
+    state.turnStep = 'viewing_result';
     saveGame();
+    renderAll();
 
     // 5) In ra Bài học
     showResult(resultBox, { changes, notes, verdict, lesson: card.lesson });
@@ -1896,8 +1923,9 @@ function playIncomeCard(card, day) {
     addLog({ title: `Thẻ #${pad2(card.id)} ${card.title}: chia ${signed(card.income)} vào 3 quỹ`, changes, notes });
     state.lastEvent = { type: 'income', day, title: card.title, choice: `Chia ${money(card.income)} vào 3 quỹ`, changes, notes, lesson: card.lesson };
     setMessage(`Ngày ${day}: bạn nhận ${money(card.income)} và chia vào 3 quỹ.`);
-    renderAll();
+    state.turnStep = 'viewing_result';
     saveGame();
+    renderAll();
 
     showResult($('.result', root), { changes, notes, lesson: card.lesson });
   });
@@ -1983,8 +2011,9 @@ function playGoalCell(day) {
       changes, notes, lesson: goal.lesson,
     };
     setMessage(moved > 0 ? `Ngày ${day}: bạn chuyển ${money(moved)} sang quỹ Tiết kiệm.` : `Ngày ${day}: bạn giữ nguyên các quỹ.`);
-    renderAll();
+    state.turnStep = 'viewing_result';
     saveGame();
+    renderAll();
     closeModal();
   }
 
@@ -2014,6 +2043,7 @@ function confirmRestart() {
    ===================================================================== */
 
 async function startNewGame() {
+  if (!validateDeck()) return;
   clearSave();
   clearPlayerDom();                                   // dọn DOM sinh động của ván cũ trước khi tạo ván mới
   state = createState(1);                             // state tạm để vẽ bàn cờ trống
@@ -2044,6 +2074,8 @@ async function startNewGame() {
   });
   state.current = 0;
   state.phase = 'playing';
+  state.turnStep = 'idle';
+  state.activeCardId = null;
   shownPlayer = null;
   viewedPlayer = null;
   setMessage(count > 1 ? `Lượt của ${state.player.name}: bấm “Tung xúc xắc” hoặc nhấn Space.` : 'Bấm “Tung xúc xắc” để bước sang ngày tiếp theo.');
@@ -2072,37 +2104,55 @@ function nextTurn() {
 
 // Hiệu ứng xúc xắc: đổi mặt liên tục rồi dừng ở số cuối (ngẫu nhiên 1–6)
 async function rollDice() {
+  const value = randomInt(1, 6);
+  state.lastRoll = value;
+  state.turnStep = 'rolling';
+  saveGame();
+
   dieEl.classList.add('is-rolling');
   const frames = reduceMotion ? 0 : 9;
   for (let i = 0; i < frames; i++) {
     renderDie(randomInt(1, 6));
     await sleep(75);
   }
-  const value = randomInt(1, 6);
   dieEl.classList.remove('is-rolling');
-  state.lastRoll = value;
-  saveGame();
+  renderDie(value);
   return value;
 }
 
-// Đi từng ô một để người chơi nhìn thấy quân cờ di chuyển
+// Đi từng ô một để người chơi nhìn thấy quân cờ di chuyển (state luôn đi trước hiệu ứng UI để chống lệch vị trí khi F5)
 async function moveToken(steps) {
-  for (let i = 0; i < steps; i++) {
+  const activeState = state;
+  const startPos = state.position;
+  const targetPos = Math.min(LAST_INDEX, startPos + Math.max(0, steps));
+  state.turnStep = 'moving';
+  state.position = targetPos;
+  saveGame();
+
+  if (reduceMotion || steps <= 0) {
+    placeToken(false);
+    renderBoard();
+    return;
+  }
+
+  state.position = startPos;
+  for (let i = 0; i < steps && state.position < targetPos; i++) {
     state.position += 1;
     placeToken(true);
     renderBoard();
     await sleep(300);
+    if (state !== activeState) return;
   }
-  saveGame();
+  state.position = targetPos;
 }
 
 /**
- * Hàm thuần tìm danh sách người chơi bị đá khi `mover` vừa di chuyển tới `mover.position`.
- * Ngoại lệ:
- *  - Không đá ở ô xuất phát (pos === 0) hoặc ô về đích (pos >= LAST_INDEX).
- *  - Không đá tại các ô An toàn tài chính (BOARD[pos].type === 'safety' - Vùng an toàn).
- *  - Không đá người chơi đã hoàn thành hành trình (p.done === true).
- */
+   * Hàm thuần tìm danh sách người chơi bị đá khi `mover` vừa di chuyển tới `mover.position`.
+   * Ngoại lệ:
+   *  - Không đá ở ô xuất phát (pos === 0) hoặc ô về đích (pos >= LAST_INDEX).
+   *  - Không đá tại các ô An toàn tài chính (BOARD[pos].type === 'safety' - Vùng an toàn).
+   *  - Không đá người chơi đã hoàn thành hành trình (p.done === true).
+   */
 function findCaptured(players, mover) {
   if (!Array.isArray(players) || players.length < 2 || !mover) return [];
   const pos = mover.position;
@@ -2131,48 +2181,70 @@ async function checkCapture() {
       changes: [],
       notes: ['Quay lại vạch xuất phát (Ngày 1).'],
     });
+    if (victim.log.length > MAX_LOG_ENTRIES) {
+      victim.log.length = MAX_LOG_ENTRIES;
+    }
 
     // 3. Hiển thị thông báo lên bàn cờ
     setMessage(msg);
   }
 
-  // 4. Cập nhật vị trí trên bàn cờ kèm hiệu ứng FLIP cho tất cả quân cờ bị đổi chỗ (600ms)
+  // 4. Lưu ngay dữ liệu vị trí bị đá (victim.position = 0) và log vào localStorage TRƯỚC KHI chạy hiệu ứng UI FLIP
+  saveGame();
+
+  // 5. Cập nhật vị trí trên bàn cờ kèm hiệu ứng FLIP cho tất cả quân cờ bị đổi chỗ (600ms)
   placeToken(true, 600);
   renderAll();
-  saveGame();
   // Tạm dừng một nhịp để người chơi kịp nhìn hiệu ứng đá quân và đọc thông báo trước khi mở thẻ
-  await sleep(900);
+  if (!reduceMotion) await sleep(900);
 }
 
-// Xử lý ô quân cờ vừa đứng vào
+// Xử lý ô quân cờ vừa đứng vào (Atomic Commit: không gọi saveGame() hay gán turnStep = 'idle' bên trong resolveCell)
 async function resolveCell() {
+  const activeState = state;
   const cell = BOARD[state.position];
   const day = state.position + 1;
+  state.turnStep = 'resolving';
 
   if (cell.type === 'cost') {
-    // Chi phí cần thiết: tự động trừ từ quỹ Nhu cầu
+    // Chi phí cần thiết: tự động trừ từ quỹ Nhu cầu, đánh dấu viewing_result và lưu ngay để chống trừ tiền lần 2 nếu trình duyệt đóng đột ngột
+    state.activeCardId = null;
     const { changes, notes } = applyEffects({ need: -cell.amount });
     addLog({ title: 'Chi phí cần thiết', changes, notes });
     state.lastEvent = { type: 'cost', day, title: 'Chi phí cần thiết', text: `Trả ${money(cell.amount)} từ quỹ Nhu cầu.`, changes, notes };
+    state.turnStep = 'viewing_result';
+    saveGame();
     setMessage(`Ngày ${day}: trả ${money(cell.amount)} chi phí cần thiết từ quỹ Nhu cầu.`);
     renderAll();
-    saveGame();
   } else if (cell.type === 'goal') {
+    state.activeCardId = null;
     setMessage(`Ngày ${day}: ô Mục tiêu tiết kiệm.`);
     renderAll();
     await playGoalCell(day);
-    saveGame();
+    if (state !== activeState) return;
   } else if (cell.type === 'income') {
+    const savedCard = Number.isInteger(state.activeCardId)
+      ? CARDS.find(c => c.id === state.activeCardId && c.type === 'income')
+      : null;
+    const card = savedCard || drawCard('income');
+    state.activeCardId = card.id;
     setMessage(`Ngày ${day}: ô Thu nhập. Rút thẻ!`);
     renderAll();
-    await playIncomeCard(drawCard('income'), day);
-    saveGame();
+    await playIncomeCard(card, day);
+    if (state !== activeState) return;
+    state.activeCardId = null;
   } else {
     // shopping, incident, safety: rút một thẻ cùng loại
+    const savedCard = Number.isInteger(state.activeCardId)
+      ? CARDS.find(c => c.id === state.activeCardId && c.type === cell.type)
+      : null;
+    const card = savedCard || drawCard(cell.type);
+    state.activeCardId = card.id;
     setMessage(`Ngày ${day}: ${CELL_TYPES[cell.type].name}. Rút thẻ!`);
     renderAll();
-    await playChoiceCard(drawCard(cell.type), day);
-    saveGame();
+    await playChoiceCard(card, day);
+    if (state !== activeState) return;
+    state.activeCardId = null;
   }
 }
 
@@ -2181,22 +2253,9 @@ function setBusy(flag) {
   renderControls();
 }
 
-async function handleRoll() {
-  if (state.phase === 'finished') { showScoreAndMaybeRestart(); return; }
-  if (state.phase !== 'playing' || state.busy) return;
-
-  viewedPlayer = null;
-  setBusy(true);
-  const roll = await rollDice();
-  const steps = Math.min(roll, LAST_INDEX - state.position);      // không đi quá Ngày 30
-  setMessage(steps < roll
-    ? `Bạn tung được ${roll}, nhưng chỉ còn ${steps} ô nữa là tới Ngày ${TOTAL_DAYS}.`
-    : `Bạn tung được ${roll}: đi ${steps} ô.`);
-  renderAll();
-
-  await moveToken(steps);
-  await checkCapture();
-  await resolveCell();
+// Hoàn tất lượt nguyên tử (Atomic Commit): chỉ gán turnStep = 'idle' và gọi saveGame() đúng 1 lần duy nhất ở cuối hàm sau nextTurn()
+async function completeTurnAfterResolve() {
+  const activeState = state;
 
   if (state.position === LAST_INDEX && !state.player.done) {
     state.player.done = true;
@@ -2207,7 +2266,8 @@ async function handleRoll() {
     if (state.players.length > 1 && !state.players.every(p => p.done)) {
       setMessage(`🎉 Chúc mừng ${state.player.name} đã cán đích Ngày ${TOTAL_DAYS}! Chuyển lượt cho người chơi tiếp theo.`);
       renderAll();
-      await sleep(1100);
+      if (!reduceMotion) await sleep(1100);
+      if (state !== activeState) return;
     }
   }
 
@@ -2215,9 +2275,89 @@ async function handleRoll() {
     await finishGame();
   } else {
     nextTurn();
+    state.turnStep = 'idle';
+    state.activeCardId = null;
     saveGame();
   }
   setBusy(false);
+}
+
+// Khôi phục toàn diện giữa lượt (rolling / moving / resolving / viewing_result) khi người chơi F5 giữa chừng
+async function resumeMidTurn() {
+  if (state.phase !== 'playing' || state.turnStep === 'idle') return;
+  const activeState = state;
+  viewedPlayer = null;
+  setBusy(true);
+
+  if (state.turnStep === 'viewing_result') {
+    await completeTurnAfterResolve();
+    return;
+  }
+
+  if (state.turnStep === 'rolling') {
+    const roll = Number.isInteger(state.lastRoll) && state.lastRoll >= 1 && state.lastRoll <= 6
+      ? state.lastRoll
+      : randomInt(1, 6);
+    state.lastRoll = roll;
+    const steps = Math.min(roll, LAST_INDEX - state.position);
+    setMessage(steps < roll
+      ? `Bạn tung được ${roll}, nhưng chỉ còn ${steps} ô nữa là tới Ngày ${TOTAL_DAYS}.`
+      : `Bạn tung được ${roll}: đi ${steps} ô.`);
+    renderAll();
+
+    state.turnStep = 'moving';
+    const movePromise = moveToken(steps);
+    if (!reduceMotion) {
+      await movePromise;
+      if (state !== activeState) return;
+    }
+  }
+
+  if (state.turnStep === 'moving') {
+    const capPromise = checkCapture();
+    if (!reduceMotion) {
+      await capPromise;
+      if (state !== activeState) return;
+    }
+    state.turnStep = 'resolving';
+  }
+
+  if (state.turnStep === 'resolving') {
+    await resolveCell();
+    if (state !== activeState) return;
+    await completeTurnAfterResolve();
+  }
+}
+
+// Giữ bí danh tương thích cho bước resolving
+function resumeResolvingTurn() {
+  return resumeMidTurn();
+}
+
+async function handleRoll() {
+  if (state.phase === 'finished') { showScoreAndMaybeRestart(); return; }
+  if (state.phase !== 'playing' || state.busy) return;
+
+  const activeState = state;
+  viewedPlayer = null;
+  setBusy(true);
+  state.turnStep = 'rolling';
+  const roll = await rollDice();
+  if (state !== activeState) return;
+  const steps = Math.min(roll, LAST_INDEX - state.position);      // không đi quá Ngày 30
+  setMessage(steps < roll
+    ? `Bạn tung được ${roll}, nhưng chỉ còn ${steps} ô nữa là tới Ngày ${TOTAL_DAYS}.`
+    : `Bạn tung được ${roll}: đi ${steps} ô.`);
+  renderAll();
+
+  state.turnStep = 'moving';
+  await moveToken(steps);
+  if (state !== activeState) return;
+  await checkCapture();
+  if (state !== activeState) return;
+  await resolveCell();
+  if (state !== activeState) return;
+  await completeTurnAfterResolve();
 }
 
 
@@ -2305,7 +2445,10 @@ async function showScoreAndMaybeRestart() {
 }
 
 async function finishGame() {
+  state.players.forEach(p => { p.done = true; });
   state.phase = 'finished';
+  state.turnStep = 'idle';
+  state.activeCardId = null;
   setMessage(`Bạn đã đến Ngày ${TOTAL_DAYS}. Xem bảng điểm nào!`);
   renderAll();
   saveGame();
@@ -2352,10 +2495,16 @@ function saveGame() {
     const data = {
       version: SAVE_VERSION,
       phase: state.phase,
+      turnStep: VALID_TURN_STEPS.includes(state.turnStep) ? state.turnStep : 'idle',
+      activeCardId: Number.isInteger(state.activeCardId) ? state.activeCardId : null,
       message: state.message,
-      drawnCardIds: [...state.drawnCardIds],
+      drawnCardIds: [...new Set(state.drawnCardIds)],
       current: state.current,
-      players: state.players.map(({ tokenEl, ...rest }) => rest),
+      players: state.players.map(({ tokenEl, ...rest }) => ({
+        ...rest,
+        name: String(rest.name ?? '').trim().slice(0, MAX_NAME_LENGTH) || 'Người chơi',
+        log: Array.isArray(rest.log) ? rest.log.slice(0, MAX_LOG_ENTRIES) : [],
+      })),
     };
     localStorage.setItem(SAVE_KEY, JSON.stringify(data));
   } catch (_) {
@@ -2367,26 +2516,101 @@ function clearSave() {
   try { localStorage.removeItem(SAVE_KEY); } catch (_) {}
 }
 
-// Kiểm tra tính hợp lệ sâu (Deep Validation) của dữ liệu lưu trong localStorage
+// Kiểm tra tính hợp lệ siêu chặt chẽ (Super Deep Validation) của dữ liệu lưu trong localStorage
 function isValidSavedData(data) {
   if (!data || typeof data !== 'object') return false;
   if (data.version !== SAVE_VERSION) return false;
   if (data.phase !== 'playing' && data.phase !== 'finished') return false;
+  if (data.turnStep !== undefined && !VALID_TURN_STEPS.includes(data.turnStep)) return false;
+
+  const validCardIds = new Set(CARDS.map(c => c.id));
+  if (data.activeCardId !== null && data.activeCardId !== undefined) {
+    if (!Number.isInteger(data.activeCardId) || !validCardIds.has(data.activeCardId)) return false;
+  }
+  if (!Array.isArray(data.drawnCardIds)) return false;
+  if (new Set(data.drawnCardIds).size !== data.drawnCardIds.length) return false;
+  if (!data.drawnCardIds.every(id => Number.isInteger(id) && validCardIds.has(id))) return false;
+
   if (!Array.isArray(data.players) || data.players.length < 1 || data.players.length > MAX_PLAYERS) return false;
   if (!Number.isInteger(data.current) || data.current < 0 || data.current >= data.players.length) return false;
+  if (data.phase === 'finished' && !data.players.every(p => p && p.done === true)) return false;
 
   for (const p of data.players) {
     if (!p || typeof p !== 'object') return false;
-    if (typeof p.name !== 'string' || p.name.trim().length === 0) return false;
+    if (typeof p.done !== 'boolean') return false;
+    if (typeof p.name !== 'string' || p.name.trim().length === 0 || p.name.length > MAX_NAME_LENGTH) return false;
     if (!p.funds || typeof p.funds !== 'object') return false;
     if (!FUND_IDS.every(id => typeof p.funds[id] === 'number' && Number.isFinite(p.funds[id]))) return false;
     if (!Number.isInteger(p.position) || p.position < 0 || p.position > LAST_INDEX) return false;
-    if (!p.goal || typeof p.goal !== 'object' || typeof p.goal.name !== 'string' || !p.goal.name.trim() ||
-        typeof p.goal.target !== 'number' || !Number.isFinite(p.goal.target) || p.goal.target <= 0) {
+    if (p.lastRoll !== null && (!Number.isInteger(p.lastRoll) || p.lastRoll < 1 || p.lastRoll > 6)) return false;
+    if (!Number.isInteger(p.safetyCorrect) || p.safetyCorrect < 0) return false;
+    if (!Number.isInteger(p.safetyTotal) || p.safetyTotal < 0) return false;
+    if (p.safetyCorrect > p.safetyTotal) return false;
+
+    // Nhất quán Goal: id, name, target, icon phải khớp hoàn toàn với bản ghi chuẩn trong GOALS
+    if (!p.goal || typeof p.goal !== 'object') return false;
+    const canonicalGoal = GOALS.find(g => g.id === p.goal.id);
+    if (
+      !canonicalGoal ||
+      p.goal.name !== canonicalGoal.name ||
+      p.goal.target !== canonicalGoal.target ||
+      p.goal.icon !== canonicalGoal.icon
+    ) {
       return false;
     }
-    if (!Array.isArray(p.log)) return false;
+
+    if (!Array.isArray(p.log) || p.log.length > MAX_LOG_ENTRIES) return false;
+    for (const entry of p.log) {
+      if (!entry || typeof entry !== 'object') return false;
+      if (typeof entry.day !== 'number' || !Number.isFinite(entry.day) || entry.day <= 0 || entry.day > TOTAL_DAYS) return false;
+      if (typeof entry.title !== 'string') return false;
+      if (!Array.isArray(entry.changes) || !Array.isArray(entry.notes)) return false;
+      for (const ch of entry.changes) {
+        if (!ch || typeof ch !== 'object') return false;
+        if (!FUND_IDS.includes(ch.fund)) return false;
+        if (typeof ch.delta !== 'number' || !Number.isFinite(ch.delta)) return false;
+      }
+      for (const note of entry.notes) {
+        if (typeof note !== 'string') return false;
+      }
+    }
   }
+
+  // Nhất quán Lượt chơi (done, phase, position, current):
+  // - Nếu phase === 'finished' thì toàn bộ người chơi bắt buộc phải có done === true (đã kiểm tra ở trên).
+  // - Nếu phase === 'playing' và turnStep === 'idle', người đang giữ lượt không được phép có done === true.
+  // - Người chơi không đang ở giữa lượt nhưng đứng tại ô đích (LAST_INDEX) bắt buộc phải có done === true.
+  const currentPlayer = data.players[data.current];
+  const effectiveTurnStep = data.turnStep ?? 'idle';
+  if (data.phase === 'playing' && effectiveTurnStep === 'idle' && currentPlayer.done === true) {
+    return false;
+  }
+  for (let i = 0; i < data.players.length; i++) {
+    const p = data.players[i];
+    const isMidTurnCurrent = data.phase === 'playing' && effectiveTurnStep !== 'idle' && i === data.current;
+    if (!isMidTurnCurrent && p.position === LAST_INDEX && p.done !== true) {
+      return false;
+    }
+  }
+
+  // Sự tương thích của thẻ hiện tại (Active Card):
+  // Nếu turnStep là 'resolving' hoặc 'viewing_result' (hoặc có activeCardId khác null),
+  // thẻ bài activeCardId bắt buộc phải khớp với type của ô cờ mà người chơi current đang đứng (kể cả ô 'income' -> thẻ 'income')
+  const currentCell = BOARD[currentPlayer.position];
+  if (!currentCell) return false;
+  if (
+    effectiveTurnStep === 'resolving' ||
+    effectiveTurnStep === 'viewing_result' ||
+    (data.activeCardId !== null && data.activeCardId !== undefined)
+  ) {
+    if (data.activeCardId !== null && data.activeCardId !== undefined) {
+      const activeCard = CARDS.find(c => c.id === data.activeCardId);
+      if (!activeCard || activeCard.type !== currentCell.type) {
+        return false;
+      }
+    }
+  }
+
   return true;
 }
 
@@ -2402,23 +2626,29 @@ function loadGame() {
     clearPlayerDom();
     state = createState(data.players.length);
     state.phase = data.phase;
+    state.turnStep = VALID_TURN_STEPS.includes(data.turnStep) ? data.turnStep : 'idle';
+    state.activeCardId = Number.isInteger(data.activeCardId) ? data.activeCardId : null;
     state.busy = false;
     state.message = typeof data.message === 'string' ? data.message : '';
-    state.drawnCardIds = new Set(
-      Array.isArray(data.drawnCardIds) ? data.drawnCardIds.filter(id => Number.isInteger(id)) : []
-    );
-    state.current = clamp(data.current, 0, data.players.length - 1);
-    state.players = data.players.map((p, i) => ({
-      ...createPlayer(i),
-      ...p,
-      color: PLAYER_COLORS[i], // luôn ép màu chuẩn theo vị trí để tránh CSS injection hoặc lệch màu
-      done: Boolean(p.done || p.position === LAST_INDEX),
-      safetyCorrect: Number.isInteger(p.safetyCorrect) && p.safetyCorrect >= 0 ? p.safetyCorrect : 0,
-      safetyTotal: Number.isInteger(p.safetyTotal) && p.safetyTotal >= 0 ? p.safetyTotal : 0,
-      tokenEl: null,
-    }));
-    // Nếu đang ở phase playing mà người hiện tại đã done nhưng vẫn còn người chưa done, chuyển tới người hợp lệ
-    if (state.phase === 'playing' && state.player.done && !state.players.every(p => p.done)) {
+    state.drawnCardIds = new Set(data.drawnCardIds);
+    const currentIdx = clamp(data.current, 0, data.players.length - 1);
+    state.current = currentIdx;
+    state.players = data.players.map((p, i) => {
+      const isMidTurnCurrent = state.phase === 'playing' && state.turnStep !== 'idle' && i === currentIdx;
+      return {
+        ...createPlayer(i),
+        ...p,
+        name: p.name.trim().slice(0, MAX_NAME_LENGTH),
+        log: p.log.slice(0, MAX_LOG_ENTRIES),
+        color: PLAYER_COLORS[i], // luôn ép màu chuẩn theo vị trí để tránh CSS injection hoặc lệch màu
+        done: Boolean(p.done || (!isMidTurnCurrent && p.position === LAST_INDEX)),
+        safetyCorrect: p.safetyCorrect,
+        safetyTotal: p.safetyTotal,
+        tokenEl: null,
+      };
+    });
+    // Nếu đang ở phase playing (và đang ở đầu lượt 'idle') mà người hiện tại đã done nhưng vẫn còn người chưa done, chuyển tới người hợp lệ
+    if (state.phase === 'playing' && state.turnStep === 'idle' && state.player.done && !state.players.every(p => p.done)) {
       nextTurn();
     }
     state.players.forEach(buildToken);
@@ -2426,6 +2656,11 @@ function loadGame() {
     shownPlayer = state.player;
     Object.assign(shownFunds, state.funds);
     renderAll();
+
+    // Khôi phục giữa lượt: nếu người chơi F5 khi đang ở bước 'rolling', 'moving' hoặc 'resolving'
+    if (state.phase === 'playing' && state.turnStep !== 'idle') {
+      resumeMidTurn();
+    }
     return true;
   } catch (_) {
     clearSave();
@@ -2653,6 +2888,8 @@ function runMoneyMissionTests() {
   const prevState = state;
   const prevShownPlayer = shownPlayer;
   const prevShownFunds = { ...shownFunds };
+  const prevReduceMotion = reduceMotion;
+  reduceMotion = true;
   const results = [];
 
   function assert(name, condition, detail = '') {
@@ -2762,17 +2999,24 @@ function runMoneyMissionTests() {
       `unique=${drawnCycle.size}/${shoppingTotal}, thẻ chu kỳ mới=#${nextCard?.id}`
     );
 
-    // 9. Xác thực sâu isValidSavedData từ chối dữ liệu hỏng (NaN, thiếu goal, số người chơi sai, sai version)
+    // 9. Xác thực sâu isValidSavedData từ chối dữ liệu hỏng (NaN, thiếu goal, số người chơi sai, sai drawnCardIds/lastRoll/log)
     const validSample = {
       version: SAVE_VERSION,
       phase: 'playing',
+      turnStep: 'idle',
+      activeCardId: null,
+      drawnCardIds: [1, 2],
       current: 0,
       players: [{
         name: 'A',
+        done: false,
         funds: { need: 500000, want: 200000, save: 300000 },
         position: 5,
+        lastRoll: 4,
+        safetyCorrect: 1,
+        safetyTotal: 2,
         goal: GOALS[0],
-        log: [],
+        log: [{ day: 1, title: 'Bắt đầu', changes: [{ fund: 'need', delta: 500000 }], notes: ['Khởi tạo ngân sách'] }],
       }],
     };
     const badNaN = JSON.parse(JSON.stringify(validSample));
@@ -2782,14 +3026,22 @@ function runMoneyMissionTests() {
     const badCount = { ...validSample, players: Array.from({ length: 9 }, () => validSample.players[0]) };
     const badPos = JSON.parse(JSON.stringify(validSample));
     badPos.players[0].position = 99;
+    const badDrawn = { ...validSample, drawnCardIds: 'not-an-array' };
+    const badRoll = JSON.parse(JSON.stringify(validSample));
+    badRoll.players[0].lastRoll = 7;
+    const badLog = JSON.parse(JSON.stringify(validSample));
+    badLog.players[0].log = [{ day: 1, title: 'Thiếu changes và notes' }];
     assert(
       '9. Xác thực sâu dữ liệu lưu (isValidSavedData)',
       isValidSavedData(validSample) === true &&
         isValidSavedData(badNaN) === false &&
         isValidSavedData(badGoal) === false &&
         isValidSavedData(badCount) === false &&
-        isValidSavedData(badPos) === false,
-      'Chấp nhận dữ liệu chuẩn và từ chối NaN / thiếu goal / >8 người / sai vị trí'
+        isValidSavedData(badPos) === false &&
+        isValidSavedData(badDrawn) === false &&
+        isValidSavedData(badRoll) === false &&
+        isValidSavedData(badLog) === false,
+      'Chấp nhận dữ liệu chuẩn và từ chối NaN / thiếu goal / >8 người / sai vị trí / sai drawnCardIds / sai lastRoll / sai cấu trúc log'
     );
 
     // 10. Cân bằng Thẻ #14 (Món đồ bị lỗi) và Mục tiêu tiết kiệm mới
@@ -2842,10 +3094,278 @@ function runMoneyMissionTests() {
       saveDidNotThrow === true,
       'saveGame() không crash và hiển thị cảnh báo khi localStorage bị chặn hoặc đầy bộ nhớ'
     );
+
+    // 13. Lưu và khôi phục giữa lượt (Mid-turn Recovery: turnStep === 'resolving')
+    const prevRawSave = localStorage.getItem(SAVE_KEY);
+    let midTurnRecovered = false;
+    let recoveredStep = '';
+    try {
+      state = createState(1);
+      state.phase = 'playing';
+      state.turnStep = 'resolving';
+      state.position = 5; // Ngày 6: ô Mua sắm
+      state.lastRoll = 4;
+      state.goal = GOALS[0];
+      state.funds = { need: 500000, want: 200000, save: 300000 };
+      saveGame();
+
+      state.turnStep = 'idle'; // giả lập bị reset trước khi gọi loadGame()
+      const loaded = loadGame();
+      recoveredStep = state.turnStep;
+      midTurnRecovered = loaded === true && state.turnStep === 'resolving' && state.position === 5 && state.lastRoll === 4;
+    } finally {
+      // Đổi tham chiếu state trước khi đóng modal để hủy luồng async resumeMidTurn của bài test
+      state = prevState;
+      if (modalEl.open) closeModal();
+      if (prevRawSave === null) clearSave();
+      else localStorage.setItem(SAVE_KEY, prevRawSave);
+    }
+    assert(
+      '13. Khôi phục giữa lượt (turnStep === "resolving")',
+      midTurnRecovered,
+      `loadGame() giữ đúng turnStep="${recoveredStep}" tại vị trí ô 5 thay vì bị reset về "idle"`
+    );
+
+    // 14. Lưu và khôi phục giữa lượt khi F5 ở bước 'rolling' (turnStep = 'rolling', lastRoll = 3)
+    const prevRawSave14 = localStorage.getItem(SAVE_KEY);
+    let rollingRecovered = false;
+    let posAfterRollingResume = -1;
+    let stepAfterRollingResume = '';
+    try {
+      state = createState(1);
+      state.phase = 'playing';
+      state.turnStep = 'rolling';
+      state.position = 1; // Ngày 2: đi thêm 3 ô sẽ tới ô 4 (Ngày 5 - An toàn tài chính)
+      state.lastRoll = 3;
+      state.goal = GOALS[0];
+      state.funds = { need: 500000, want: 200000, save: 300000 };
+      saveGame();
+
+      const loaded = loadGame();
+      posAfterRollingResume = state.position;
+      stepAfterRollingResume = state.turnStep;
+      rollingRecovered = loaded === true && posAfterRollingResume === 4 && stepAfterRollingResume === 'resolving';
+    } finally {
+      state = prevState;
+      if (modalEl.open) closeModal();
+      if (prevRawSave14 === null) clearSave();
+      else localStorage.setItem(SAVE_KEY, prevRawSave14);
+    }
+    assert(
+      '14. Khôi phục giữa lượt từ "rolling" (lastRoll = 3 → di chuyển & chuyển sang "resolving")',
+      rollingRecovered,
+      `Từ ô 1 + lastRoll=3 → tự động di chuyển tới ô ${posAfterRollingResume}, turnStep="${stepAfterRollingResume}"`
+    );
+
+    // 15. Kiểm tra sâu isValidSavedData: từ chối drawnCardIds chứa ID ma, activeCardId ma, log.changes sai cấu trúc, safetyCorrect âm
+    const ghostCardSave = JSON.parse(JSON.stringify(validSample));
+    ghostCardSave.drawnCardIds = [1, 9999];
+    const ghostActiveSave = JSON.parse(JSON.stringify(validSample));
+    ghostActiveSave.activeCardId = 8888;
+    const badLogChangesSave = JSON.parse(JSON.stringify(validSample));
+    badLogChangesSave.players[0].log = [{
+      day: 2,
+      title: 'Chi tiêu lỗi cấu trúc changes',
+      changes: [{ fund: 'invalid_fund', delta: 'not-a-number' }],
+      notes: ['Ghi chú hợp lệ'],
+    }];
+    const badLogNotesSave = JSON.parse(JSON.stringify(validSample));
+    badLogNotesSave.players[0].log = [{
+      day: 2,
+      title: 'Ghi chú không phải string',
+      changes: [{ fund: 'need', delta: -50000 }],
+      notes: [12345],
+    }];
+    const badSafetySave = JSON.parse(JSON.stringify(validSample));
+    badSafetySave.players[0].safetyCorrect = -1;
+    assert(
+      '15. Từ chối ID thẻ ma & log.changes sai cấu trúc (isValidSavedData)',
+      isValidSavedData(ghostCardSave) === false &&
+        isValidSavedData(ghostActiveSave) === false &&
+        isValidSavedData(badLogChangesSave) === false &&
+        isValidSavedData(badLogNotesSave) === false &&
+        isValidSavedData(badSafetySave) === false,
+      'Từ chối drawnCardIds=[1,9999], activeCardId=8888, log.changes sai {fund,delta}, notes sai kiểu, safetyCorrect < 0'
+    );
+
+    // 16. Chống trừ tiền 2 lần tại ô Chi phí khi F5 ngay sau khi chạy xong resolveCell() (turnStep === 'viewing_result')
+    const prevRawSave16 = localStorage.getItem(SAVE_KEY);
+    let costIdempotent = false;
+    let stepRightAfterResolve = '';
+    let needAfterCostF5 = 0;
+    try {
+      state = createState(2);
+      state.phase = 'playing';
+      state.current = 0;
+      state.players.forEach(p => {
+        p.goal = GOALS[0];
+        p.funds = { need: 500000, want: 200000, save: 300000 };
+      });
+      state.position = 12; // Ngày 13: ô cost 50.000₫
+      state.lastRoll = 3;
+      resolveCell(); // vừa chạy xong resolveCell: đã trừ 50.000₫, gán turnStep = 'viewing_result' và saveGame()
+
+      stepRightAfterResolve = state.turnStep;
+      const needRightAfterResolve = state.players[0].funds.need;
+      const loadedAfterCost = loadGame(); // giả lập F5 ngay tại thời điểm vừa chạy xong resolveCell()
+      resumeMidTurn();                    // đảm bảo resumeMidTurn() chuyển lượt an toàn và không trừ tiền lần 2
+      needAfterCostF5 = state.players[0].funds.need;
+      costIdempotent =
+        stepRightAfterResolve === 'viewing_result' &&
+        needRightAfterResolve === 450000 &&
+        loadedAfterCost === true &&
+        needAfterCostF5 === 450000 &&
+        state.current === 1 &&
+        state.turnStep === 'idle' &&
+        state.players[0].log.length === 1;
+    } finally {
+      state = prevState;
+      if (prevRawSave16 === null) clearSave();
+      else localStorage.setItem(SAVE_KEY, prevRawSave16);
+    }
+    assert(
+      '16. Chống trừ tiền 2 lần tại ô Chi phí (F5 lúc turnStep="viewing_result")',
+      costIdempotent,
+      `Sau resolveCell: step="${stepRightAfterResolve}", sau F5: Người 1 còn ${needAfterCostF5}₫, chuyển sang Người ${state.current + 1 || 2}`
+    );
+
+    // 17. Ràng buộc logic, kiểu dữ liệu done & Quota trong isValidSavedData (safetyCorrect > safetyTotal, trùng drawnCardIds, finished nhưng chưa done, done sai kiểu boolean, tên > 20 ký tự, log > 100)
+    const badSafetyLogic = JSON.parse(JSON.stringify(validSample));
+    badSafetyLogic.players[0].safetyCorrect = 5;
+    badSafetyLogic.players[0].safetyTotal = 3;
+    const dupDrawnCards = JSON.parse(JSON.stringify(validSample));
+    dupDrawnCards.drawnCardIds = [1, 1];
+    const badFinishedDone = JSON.parse(JSON.stringify(validSample));
+    badFinishedDone.phase = 'finished';
+    badFinishedDone.players[0].done = false;
+    const badDoneType = JSON.parse(JSON.stringify(validSample));
+    badDoneType.players[0].done = 'true';
+    const badLongName = JSON.parse(JSON.stringify(validSample));
+    badLongName.players[0].name = 'N'.repeat(25);
+    const badLongLog = JSON.parse(JSON.stringify(validSample));
+    badLongLog.players[0].log = Array.from({ length: 101 }, (_, i) => ({
+      day: (i % 30) + 1,
+      title: `Mục #${i}`,
+      changes: [],
+      notes: [],
+    }));
+    assert(
+      '17. Ràng buộc logic, kiểu dữ liệu done & Quota (safetyCorrect > safetyTotal, trùng ID, finished/done, done="true", quota)',
+      isValidSavedData(badSafetyLogic) === false &&
+        isValidSavedData(dupDrawnCards) === false &&
+        isValidSavedData(badFinishedDone) === false &&
+        isValidSavedData(badDoneType) === false &&
+        isValidSavedData(badLongName) === false &&
+        isValidSavedData(badLongLog) === false,
+      'Từ chối safetyCorrect=5 > safetyTotal=3, trùng drawnCardIds, finished mà chưa done, done="true" (string), tên > 20 ký tự, log > 100'
+    );
+
+    // 18. Hàm nextTurn() bỏ qua chính xác những người chơi đã về đích (done === true)
+    state = createState(4);
+    state.phase = 'playing';
+    state.current = 0;
+    state.players[0].done = false;
+    state.players[1].done = true;  // đã về đích -> phải bị bỏ qua
+    state.players[2].done = true;  // đã về đích -> phải bị bỏ qua
+    state.players[3].done = false;
+    nextTurn();
+    const jumpedToP3 = state.current === 3 && !state.player.done;
+    nextTurn();
+    const wrappedToP0 = state.current === 0 && !state.player.done;
+    assert(
+      '18. Chuyển lượt (nextTurn) bỏ qua người đã về đích (done === true)',
+      jumpedToP3 && wrappedToP0,
+      `Từ P0 nhảy qua P1,P2 (done=true) tới P${jumpedToP3 ? 3 : '?'} rồi quay về P${wrappedToP0 ? 0 : '?'}`
+    );
+
+    // 19. Kiểm tra toàn bộ các ô Safety và ô Start (position 0) không bao giờ bị đá trong findCaptured()
+    const safetyIndices = BOARD.map((c, idx) => (c.type === 'safety' ? idx : -1)).filter(idx => idx >= 0);
+    const allSafetyProtected = safetyIndices.every(pos => {
+      const victim = { name: 'V', position: pos, done: false };
+      const mover = { name: 'M', position: pos, done: false };
+      return findCaptured([victim, mover], mover).length === 0;
+    });
+    const startProtected = findCaptured(
+      [{ name: 'V0', position: 0, done: false }, { name: 'M0', position: 0, done: false }],
+      { name: 'M0', position: 0, done: false }
+    ).length === 0;
+    assert(
+      '19. Bảo vệ tuyệt đối tại ô Xuất phát (0) và mọi ô An toàn tài chính (Safety)',
+      startProtected && allSafetyProtected && safetyIndices.length > 0,
+      `Ô start (0) và cả ${safetyIndices.length} ô safety (${safetyIndices.join(', ')}) đều trả về 0 nạn nhân`
+    );
+
+    // 20. Chống nhân đôi hiệu ứng với trạng thái viewing_result trong ván 2 người chơi
+    const prevRawSave20 = localStorage.getItem(SAVE_KEY);
+    let viewingResultOk = false;
+    try {
+      state = createState(2);
+      state.phase = 'playing';
+      state.current = 0;
+      state.turnStep = 'viewing_result';
+      state.players.forEach(p => {
+        p.goal = GOALS[0];
+        p.funds = { need: 500000, want: 150000, save: 300000 };
+      });
+      state.players[0].position = 2; // Ngày 3: ô Mua sắm (giả lập đã trừ tiền thẻ bài còn 150.000₫ ở want)
+      saveGame();
+
+      resumeMidTurn();
+      viewingResultOk =
+        state.current === 1 &&
+        state.turnStep === 'idle' &&
+        state.players[0].funds.want === 150000 &&
+        !modalEl.open;
+    } finally {
+      state = prevState;
+      if (modalEl.open) closeModal();
+      if (prevRawSave20 === null) clearSave();
+      else localStorage.setItem(SAVE_KEY, prevRawSave20);
+    }
+    assert(
+      '20. Khôi phục từ "viewing_result" (bỏ qua resolveCell, ép chuyển lượt)',
+      viewingResultOk,
+      'Chuyển sang người chơi 2 (current === 1), turnStep === "idle", không trừ tiền lần 2'
+    );
+
+    // 21. Xác minh goal.id hợp lệ trong isValidSavedData (từ chối goal.id = 9999)
+    const badGoalIdSave = JSON.parse(JSON.stringify(validSample));
+    badGoalIdSave.players[0].goal = { ...GOALS[0], id: 9999 };
+    assert(
+      '21. Từ chối goal.id không tồn tại trong GOALS (goal.id = 9999)',
+      isValidSavedData(badGoalIdSave) === false && isValidSavedData(validSample) === true,
+      `isValidSavedData(goal.id=9999) = ${isValidSavedData(badGoalIdSave)}`
+    );
+
+    // 22. Xác thực Super Deep Validation: sửa goal.target (cheat tiền), lệch loại activeCardId so với ô đang đứng, log.day = 31, người đã done ôm lượt ở trạng thái idle
+    const tamperedGoalTarget = JSON.parse(JSON.stringify(validSample));
+    tamperedGoalTarget.players[0].goal = { ...GOALS[0], target: 10000 }; // id đúng nhưng sửa target
+    const mismatchedActiveCard = JSON.parse(JSON.stringify(validSample));
+    mismatchedActiveCard.turnStep = 'resolving';
+    mismatchedActiveCard.players[0].position = 5; // Ngày 6: ô 'shopping'
+    const safetyCardId = CARDS.find(c => c.type === 'safety')?.id ?? 11;
+    mismatchedActiveCard.activeCardId = safetyCardId; // thẻ 'safety' nhưng đứng ở ô 'shopping'
+    const outOfRangeLogDay = JSON.parse(JSON.stringify(validSample));
+    outOfRangeLogDay.players[0].log = [{ day: 31, title: 'Ngày vượt quá 30', changes: [], notes: [] }];
+    const donePlayerHoldingIdleTurn = JSON.parse(JSON.stringify(validSample));
+    donePlayerHoldingIdleTurn.phase = 'playing';
+    donePlayerHoldingIdleTurn.turnStep = 'idle';
+    donePlayerHoldingIdleTurn.players[0].done = true;
+    assert(
+      '22. Super Deep Validation (cheat goal.target, lệch activeCardId/ô, log.day=31, done ôm lượt)',
+      isValidSavedData(tamperedGoalTarget) === false &&
+        isValidSavedData(mismatchedActiveCard) === false &&
+        isValidSavedData(outOfRangeLogDay) === false &&
+        isValidSavedData(donePlayerHoldingIdleTurn) === false,
+      'Từ chối hoàn toàn: sửa goal.target, activeCard="safety" tại ô "shopping", log.day=31, người đã done giữ lượt idle'
+    );
   } finally {
+    reduceMotion = prevReduceMotion;
     state = prevState;
     shownPlayer = prevShownPlayer;
     Object.assign(shownFunds, prevShownFunds);
+    clearPlayerDom();
+    state.players.forEach(buildToken);
     renderAll();
   }
 
@@ -2860,21 +3380,77 @@ window.runMoneyMissionTests = runMoneyMissionTests;
    PHẦN 9. KHỞI ĐỘNG
    ===================================================================== */
 
-// Kiểm tra mọi loại ô cần rút thẻ trên BOARD đều có ít nhất 1 thẻ bài tương ứng trong CARDS
+// Kiểm tra sâu cấu trúc bộ thẻ (Deep Deck Validation): thiếu loại thẻ, trùng ID, thiếu options, sai định dạng effects
 function validateDeck() {
+  const errors = [];
   const nonCardTypes = new Set(['start', 'goal', 'cost']);
+  const choiceCardTypes = new Set(['shopping', 'incident', 'safety']);
+
+  // 1. Kiểm tra mọi loại ô cần rút thẻ trên BOARD đều có ít nhất 1 thẻ trong CARDS
   const requiredTypes = new Set(
     BOARD.map(cell => cell.type).filter(type => !nonCardTypes.has(type))
   );
-  const missingTypes = [];
   for (const type of requiredTypes) {
-    const count = CARDS.filter(card => card.type === type).length;
+    const count = CARDS.filter(card => card && card.type === type).length;
     if (count === 0) {
-      missingTypes.push(type);
-      console.warn(`[Money Mission] Cảnh báo bộ bài: Loại ô "${type}" trên BOARD không có thẻ bài nào trong CARDS!`);
+      const typeName = CELL_TYPES[type]?.name ? `${CELL_TYPES[type].name} (${type})` : type;
+      errors.push(`Thiếu thẻ bài cho loại ô: ${typeName}.`);
     }
   }
-  return missingTypes.length === 0;
+
+  // 2. Kiểm tra từng thẻ trong CARDS: trùng ID, thiếu options (A, B), hoặc sai định dạng effects
+  const seenIds = new Set();
+  CARDS.forEach((card, idx) => {
+    if (!card || typeof card !== 'object' || !Number.isInteger(card.id)) {
+      errors.push(`Thẻ ở vị trí index ${idx} thiếu ID số nguyên hợp lệ.`);
+      return;
+    }
+    if (seenIds.has(card.id)) {
+      errors.push(`Trùng ID thẻ bài: #${pad2(card.id)} ("${card.title || 'Không tên'}").`);
+    } else {
+      seenIds.add(card.id);
+    }
+
+    if (choiceCardTypes.has(card.type)) {
+      if (!Array.isArray(card.options) || card.options.length < 2) {
+        errors.push(`Thẻ #${pad2(card.id)} ("${card.title || ''}") thuộc loại "${card.type}" nhưng có ít hơn 2 lựa chọn (options).`);
+        return;
+      }
+      card.options.forEach((opt, optIdx) => {
+        const optLabel = opt?.key || `#${optIdx + 1}`;
+        if (!opt || typeof opt !== 'object' || !opt.effects || typeof opt.effects !== 'object' || Array.isArray(opt.effects)) {
+          errors.push(`Thẻ #${pad2(card.id)} ("${card.title || ''}") - Lựa chọn ${optLabel}: thiếu object effects hợp lệ.`);
+          return;
+        }
+        for (const [fundKey, val] of Object.entries(opt.effects)) {
+          if (!FUND_IDS.includes(fundKey) || typeof val !== 'number' || !Number.isFinite(val)) {
+            errors.push(`Thẻ #${pad2(card.id)} ("${card.title || ''}") - Lựa chọn ${optLabel}: effects chứa quỹ "${fundKey}" hoặc giá trị "${val}" không hợp lệ.`);
+          }
+        }
+      });
+    }
+  });
+
+  if (errors.length > 0) {
+    errors.forEach(err => console.warn(`[Money Mission] Lỗi cấu hình bộ thẻ: ${err}`));
+    const errorRoot = html(`
+      <div class="gcard" style="--tcolor: var(--t-incident)">
+        <div class="gcard__head" style="background: var(--neg-fg); color: #fff;">
+          <span>🚨 Lỗi cấu hình hệ thống</span>
+          <span>Deep Deck Validation</span>
+        </div>
+        <div class="gcard__body">
+          <h2 class="gcard__title" style="color: var(--neg-fg);">Phát hiện lỗi dữ liệu trong kho thẻ bài (CARDS)</h2>
+          <p class="gcard__text">Trò chơi đã bị chặn khởi động để bảo vệ tính toàn vẹn. Chi tiết các lỗi phát hiện được:</p>
+          <ul class="score-rows">
+            ${errors.map(err => `<li class="score-row" style="border-color: var(--neg-fg); color: var(--neg-fg);"><b>⚠️ ${esc(err)}</b></li>`).join('')}
+          </ul>
+        </div>
+      </div>`);
+    openModal(errorRoot);
+    return false;
+  }
+  return true;
 }
 
 setMotionEnabled(!reduceMotion, false);
@@ -2893,11 +3469,12 @@ restartBtn.addEventListener('click', async () => {
   startNewGame();
 });
 
-validateDeck();
 buildBoard();
 buildLegend();
 buildFundBlocks();
-if (!loadGame()) startNewGame();
+if (validateDeck()) {
+  if (!loadGame()) startNewGame();
+}
 </script>
 </body>
 </html>
